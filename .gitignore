@@ -1,1 +1,5 @@
 *.code-workspace
+*.code-workspace
+/docs
+*.code-workspace
+*.code-workspace
