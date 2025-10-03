@@ -28,26 +28,39 @@ class WindowsUserFilesMover:
         """初始化应用程序"""
         self.root = root
         self.root.title("Windows用户文件迁移工具")
-        self.root.geometry("700x500")
-        self.root.resizable(True, True)
+        self.root.geometry("800x600")
+        self.root.minsize(700, 500)
         self.root.iconbitmap(default="")  # 可以添加图标路径
         
         # 设置中文字体支持
         self.style = ttk.Style()
         
+        # 配置现代主题样式
+        self.configure_styles()
+        
         # 创建主框架
         self.main_frame = ttk.Frame(self.root, padding="10")
         self.main_frame.pack(fill=tk.BOTH, expand=True)
         
+        # 创建标题区域
+        title_frame = ttk.Frame(self.main_frame)
+        title_frame.pack(fill=tk.X, pady=5)
+        
         # 创建标题
-        self.title_label = ttk.Label(self.main_frame, text="Windows用户文件迁移和设置备份还原工具", 
-                                     font=("SimHei", 16, "bold"))
+        self.title_label = ttk.Label(title_frame, text="Windows用户文件迁移和设置备份还原工具", 
+                                     font=("SimHei", 16, "bold"), foreground="#1a73e8")
         self.title_label.pack(pady=10)
         
         # 创建作者、版本和项目地址信息
-        self.info_label = ttk.Label(self.main_frame, text="作者：SutChan    版本：v1.10.1    项目地址：https://github.com/sutchan/Windows-User-Files-Mover", 
-                                   font=("SimHei", 10))
-        self.info_label.pack(pady=5)
+        info_frame = ttk.Frame(title_frame)
+        info_frame.pack(fill=tk.X, pady=2)
+        
+        self.info_label = ttk.Label(info_frame, text="作者：SutChan    版本：v1.10.1    项目地址：https://github.com/sutchan/Windows-User-Files-Mover", 
+                                   font=("SimHei", 10), foreground="#5f6368")
+        self.info_label.pack()
+        
+        # 添加分隔线
+        ttk.Separator(self.main_frame, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
         
         # 创建选项卡控件
         self.tab_control = ttk.Notebook(self.main_frame)
@@ -72,13 +85,31 @@ class WindowsUserFilesMover:
         self.init_backup_tab()
         self.init_restore_tab()
         
-        # 创建日志区域
+        # 创建日志区域 - 美化设计
         self.log_frame = ttk.LabelFrame(self.main_frame, text="操作日志")
         self.log_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         
-        self.log_text = scrolledtext.ScrolledText(self.log_frame, wrap=tk.WORD, width=80, height=10)
-        self.log_text.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        # 添加分隔线
+        ttk.Separator(self.log_frame, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
+        
+        # 创建日志文本框 - 美化样式
+        self.log_text = scrolledtext.ScrolledText(
+            self.log_frame,
+            wrap=tk.WORD,
+            font=("SimHei", 10),
+            bg="#f5f5f5",
+            fg="#333333",
+            insertbackground="#1a73e8",
+            selectbackground="#1a73e8",
+            selectforeground="white",
+            bd=1,
+            relief=tk.SUNKEN
+        )
+        self.log_text.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         self.log_text.config(state=tk.DISABLED)
+        
+        # 为日志框添加双击复制功能
+        self.log_text.bind("<Double-1>", lambda e: self.copy_log_text())
         
         # 配置右键菜单
         self.setup_context_menu()
@@ -86,13 +117,74 @@ class WindowsUserFilesMover:
         # 记录开始时间
         self.log("应用程序启动成功")
         
+    def configure_styles(self):
+        """配置UI样式"""
+        # 设置ttk主题
+        if sys.platform == 'win32':
+            # Windows系统设置
+            self.root.option_add("*Font", "SimHei 10")
+            
+            # 配置ttk样式
+            self.style.configure(
+                "TLabel",
+                font=("SimHei", 10),
+                foreground="#333333"
+            )
+            
+            self.style.configure(
+                "TButton",
+                font=("SimHei", 10),
+                padding=(5, 2)
+            )
+            
+            self.style.map(
+                "TButton",
+                foreground=[('active', '#ffffff')],
+                background=[('active', '#1a73e8')]
+            )
+            
+            self.style.configure(
+                "TEntry",
+                font=("SimHei", 10),
+                padding=(3, 3)
+            )
+            
+            self.style.configure(
+                "TLabelframe.Label",
+                font=("SimHei", 10, "bold"),
+                foreground="#444444"
+            )
+            
+            self.style.configure(
+                "TNotebook.Tab",
+                font=("SimHei", 10),
+                padding=(10, 3)
+            )
+            
+            self.style.map(
+                "TNotebook.Tab",
+                foreground=[('selected', '#1a73e8')],
+                background=[('selected', '#ffffff')]
+            )
+    
     def setup_context_menu(self):
         """设置右键菜单"""
-        self.context_menu = tk.Menu(self.root, tearoff=0)
+        self.context_menu = tk.Menu(self.root, tearoff=0, font=("SimHei", 10))
         self.context_menu.add_command(label="清空日志", command=self.clear_log)
+        self.context_menu.add_separator()
+        self.context_menu.add_command(label="复制选中内容", command=self.copy_log_text)
         
         # 绑定右键菜单到日志文本框
         self.log_text.bind("<Button-3>", self.show_context_menu)
+        
+    def copy_log_text(self):
+        """复制选中的日志文本"""
+        try:
+            selected_text = self.log_text.get(tk.SEL_FIRST, tk.SEL_LAST)
+            self.root.clipboard_clear()
+            self.root.clipboard_append(selected_text)
+        except tk.TclError:
+            pass
         
     def show_context_menu(self, event):
         """显示右键菜单"""
@@ -107,46 +199,69 @@ class WindowsUserFilesMover:
         
     def init_migrate_tab(self):
         """初始化文件迁移选项卡"""
-        # 创建源目录选择
-        source_frame = ttk.Frame(self.tab_migrate)
-        source_frame.pack(fill=tk.X, pady=5, padx=10)
+        # 创建内容框架
+        content_frame = ttk.Frame(self.tab_migrate, padding=(10, 5))
+        content_frame.pack(fill=tk.BOTH, expand=True)
         
-        ttk.Label(source_frame, text="源目录：", font=("SimHei", 10)).pack(side=tk.LEFT, padx=5)
+        # 创建源目录选择
+        source_frame = ttk.Frame(content_frame)
+        source_frame.pack(fill=tk.X, pady=8, padx=5)
+        
+        ttk.Label(source_frame, text="源目录：").pack(side=tk.LEFT, padx=5, pady=2)
         self.source_var = tk.StringVar(value=os.path.expandvars("%USERPROFILE%"))
-        ttk.Entry(source_frame, textvariable=self.source_var, width=50).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-        ttk.Button(source_frame, text="浏览...", command=self.browse_source).pack(side=tk.RIGHT, padx=5)
+        self.source_entry = ttk.Entry(source_frame, textvariable=self.source_var, width=50)
+        self.source_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=2)
+        self.source_button = ttk.Button(source_frame, text="浏览...", command=self.browse_source)
+        self.source_button.pack(side=tk.RIGHT, padx=5, pady=2)
         
         # 创建目标目录选择
-        target_frame = ttk.Frame(self.tab_migrate)
-        target_frame.pack(fill=tk.X, pady=5, padx=10)
+        target_frame = ttk.Frame(content_frame)
+        target_frame.pack(fill=tk.X, pady=8, padx=5)
         
-        ttk.Label(target_frame, text="目标目录：", font=("SimHei", 10)).pack(side=tk.LEFT, padx=5)
+        ttk.Label(target_frame, text="目标目录：").pack(side=tk.LEFT, padx=5, pady=2)
         self.target_var = tk.StringVar(value="E:\\Users\\Admin")
-        ttk.Entry(target_frame, textvariable=self.target_var, width=50).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-        ttk.Button(target_frame, text="浏览...", command=self.browse_target).pack(side=tk.RIGHT, padx=5)
+        self.target_entry = ttk.Entry(target_frame, textvariable=self.target_var, width=50)
+        self.target_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=2)
+        self.target_button = ttk.Button(target_frame, text="浏览...", command=self.browse_target)
+        self.target_button.pack(side=tk.RIGHT, padx=5, pady=2)
+        
+        # 添加分隔线
+        ttk.Separator(content_frame, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
         
         # 创建迁移选项
-        options_frame = ttk.LabelFrame(self.tab_migrate, text="迁移选项")
-        options_frame.pack(fill=tk.X, pady=10, padx=10)
+        options_frame = ttk.LabelFrame(content_frame, text="迁移选项")
+        options_frame.pack(fill=tk.X, pady=10, padx=5)
         
         self.migrate_appdata_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(options_frame, text="迁移AppData文件夹", variable=self.migrate_appdata_var).pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(options_frame, text="迁移AppData文件夹", variable=self.migrate_appdata_var).pack(anchor=tk.W, padx=15, pady=6)
         
         # 创建应用列表
-        apps_frame = ttk.LabelFrame(self.tab_migrate, text="选择要迁移的应用数据")
-        apps_frame.pack(fill=tk.BOTH, expand=True, pady=10, padx=10)
+        apps_frame = ttk.LabelFrame(content_frame, text="选择要迁移的应用数据")
+        apps_frame.pack(fill=tk.BOTH, expand=True, pady=10, padx=5)
         
         # 创建滚动框架
         scroll_frame = ttk.Frame(apps_frame)
-        scroll_frame.pack(fill=tk.BOTH, expand=True)
+        scroll_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         
         # 创建垂直滚动条
         scrollbar = ttk.Scrollbar(scroll_frame)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        # 创建应用列表框
-        self.app_listbox = tk.Listbox(scroll_frame, selectmode=tk.MULTIPLE, yscrollcommand=scrollbar.set, height=10)
-        self.app_listbox.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        # 创建应用列表框 - 美化样式
+        self.app_listbox = tk.Listbox(
+            scroll_frame,
+            selectmode=tk.MULTIPLE,
+            yscrollcommand=scrollbar.set,
+            height=10,
+            font=("SimHei", 10),
+            bd=1,
+            relief=tk.SUNKEN,
+            selectbackground="#1a73e8",
+            selectforeground="white",
+            highlightbackground="#e0e0e0",
+            highlightcolor="#1a73e8"
+        )
+        self.app_listbox.pack(fill=tk.BOTH, expand=True, padx=5)
         scrollbar.config(command=self.app_listbox.yview)
         
         # 预填充常见应用
@@ -161,86 +276,127 @@ class WindowsUserFilesMover:
             self.app_listbox.insert(tk.END, app)
         
         # 创建全选按钮
-        ttk.Button(apps_frame, text="全选", command=self.select_all_apps).pack(side=tk.LEFT, padx=10, pady=5)
-        ttk.Button(apps_frame, text="取消全选", command=self.deselect_all_apps).pack(side=tk.LEFT, padx=10, pady=5)
+        buttons_frame = ttk.Frame(apps_frame)
+        buttons_frame.pack(fill=tk.X, pady=5, padx=10)
+        
+        ttk.Button(buttons_frame, text="全选", command=self.select_all_apps).pack(side=tk.LEFT, padx=10, pady=5)
+        ttk.Button(buttons_frame, text="取消全选", command=self.deselect_all_apps).pack(side=tk.LEFT, padx=10, pady=5)
         
         # 创建迁移按钮
-        button_frame = ttk.Frame(self.tab_migrate)
-        button_frame.pack(fill=tk.X, pady=10, padx=10)
+        button_frame = ttk.Frame(content_frame)
+        button_frame.pack(fill=tk.X, pady=10, padx=5)
         
-        self.migrate_button = ttk.Button(button_frame, text="开始迁移", command=self.start_migration)
+        # 添加提示信息
+        warning_label = ttk.Label(button_frame, text="提示：迁移操作需要管理员权限，操作前请备份重要数据！", 
+                                 foreground="#d32f2f", font=("SimHei", 9))
+        warning_label.pack(side=tk.LEFT, padx=5)
+        
+        # 美化的迁移按钮
+        self.migrate_button = ttk.Button(button_frame, text="开始迁移", command=self.start_migration, width=15)
         self.migrate_button.pack(side=tk.RIGHT, padx=5)
         
     def init_backup_tab(self):
         """初始化开始菜单备份选项卡"""
-        # 创建备份路径选择
-        path_frame = ttk.Frame(self.tab_backup)
-        path_frame.pack(fill=tk.X, pady=10, padx=10)
+        # 创建内容框架
+        content_frame = ttk.Frame(self.tab_backup, padding=(10, 5))
+        content_frame.pack(fill=tk.BOTH, expand=True)
         
-        ttk.Label(path_frame, text="备份路径：", font=("SimHei", 10)).pack(side=tk.LEFT, padx=5)
+        # 创建备份路径选择
+        path_frame = ttk.Frame(content_frame)
+        path_frame.pack(fill=tk.X, pady=10, padx=5)
+        
+        ttk.Label(path_frame, text="备份路径：").pack(side=tk.LEFT, padx=5, pady=2)
         self.backup_path_var = tk.StringVar(value=os.path.join(os.getcwd(), "StartMenu_Backup"))
-        ttk.Entry(path_frame, textvariable=self.backup_path_var, width=50).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-        ttk.Button(path_frame, text="浏览...", command=self.browse_backup_path).pack(side=tk.RIGHT, padx=5)
+        self.backup_entry = ttk.Entry(path_frame, textvariable=self.backup_path_var, width=50)
+        self.backup_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=2)
+        self.backup_button_browse = ttk.Button(path_frame, text="浏览...", command=self.browse_backup_path)
+        self.backup_button_browse.pack(side=tk.RIGHT, padx=5, pady=2)
+        
+        # 添加分隔线
+        ttk.Separator(content_frame, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
         
         # 创建备份选项
-        options_frame = ttk.LabelFrame(self.tab_backup, text="备份选项")
-        options_frame.pack(fill=tk.X, pady=10, padx=10)
+        options_frame = ttk.LabelFrame(content_frame, text="备份选项")
+        options_frame.pack(fill=tk.X, pady=10, padx=5)
         
         self.backup_layout_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(options_frame, text="备份开始菜单布局 (XML)", variable=self.backup_layout_var).pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(options_frame, text="备份开始菜单布局 (XML)", variable=self.backup_layout_var).pack(anchor=tk.W, padx=15, pady=8)
         
         self.backup_folder_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(options_frame, text="备份开始菜单文件夹", variable=self.backup_folder_var).pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(options_frame, text="备份开始菜单文件夹", variable=self.backup_folder_var).pack(anchor=tk.W, padx=15, pady=8)
         
         self.backup_db_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(options_frame, text="备份开始菜单数据库", variable=self.backup_db_var).pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(options_frame, text="备份开始菜单数据库", variable=self.backup_db_var).pack(anchor=tk.W, padx=15, pady=8)
+        
+        # 添加提示信息
+        info_frame = ttk.Frame(content_frame)
+        info_frame.pack(fill=tk.X, pady=10, padx=5)
+        
+        info_label = ttk.Label(info_frame, text="备份文件将保存在选定的路径中，并自动创建带有时间戳的子目录。", 
+                             foreground="#5f6368", font=("SimHei", 9), wraplength=700)
+        info_label.pack(padx=10)
         
         # 创建备份按钮
-        button_frame = ttk.Frame(self.tab_backup)
-        button_frame.pack(fill=tk.X, pady=10, padx=10)
+        button_frame = ttk.Frame(content_frame)
+        button_frame.pack(fill=tk.X, pady=10, padx=5)
         
-        self.backup_button = ttk.Button(button_frame, text="开始备份", command=self.start_backup)
+        self.backup_button = ttk.Button(button_frame, text="开始备份", command=self.start_backup, width=15)
         self.backup_button.pack(side=tk.RIGHT, padx=5)
         
     def init_restore_tab(self):
         """初始化开始菜单还原选项卡"""
-        # 创建还原路径选择
-        path_frame = ttk.Frame(self.tab_restore)
-        path_frame.pack(fill=tk.X, pady=10, padx=10)
+        # 创建内容框架
+        content_frame = ttk.Frame(self.tab_restore, padding=(10, 5))
+        content_frame.pack(fill=tk.BOTH, expand=True)
         
-        ttk.Label(path_frame, text="备份文件路径：", font=("SimHei", 10)).pack(side=tk.LEFT, padx=5)
+        # 创建还原路径选择
+        path_frame = ttk.Frame(content_frame)
+        path_frame.pack(fill=tk.X, pady=10, padx=5)
+        
+        ttk.Label(path_frame, text="备份文件路径：").pack(side=tk.LEFT, padx=5, pady=2)
         self.restore_path_var = tk.StringVar()
-        ttk.Entry(path_frame, textvariable=self.restore_path_var, width=50).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-        ttk.Button(path_frame, text="浏览...", command=self.browse_restore_path).pack(side=tk.RIGHT, padx=5)
+        self.restore_entry = ttk.Entry(path_frame, textvariable=self.restore_path_var, width=50)
+        self.restore_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=2)
+        self.restore_button_browse = ttk.Button(path_frame, text="浏览...", command=self.browse_restore_path)
+        self.restore_button_browse.pack(side=tk.RIGHT, padx=5, pady=2)
+        
+        # 添加分隔线
+        ttk.Separator(content_frame, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
         
         # 创建还原选项
-        options_frame = ttk.LabelFrame(self.tab_restore, text="还原选项")
-        options_frame.pack(fill=tk.X, pady=10, padx=10)
+        options_frame = ttk.LabelFrame(content_frame, text="还原选项")
+        options_frame.pack(fill=tk.X, pady=10, padx=5)
         
         self.restore_layout_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(options_frame, text="还原开始菜单布局", variable=self.restore_layout_var).pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(options_frame, text="还原开始菜单布局", variable=self.restore_layout_var).pack(anchor=tk.W, padx=15, pady=8)
         
         self.restore_folder_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(options_frame, text="还原开始菜单文件夹", variable=self.restore_folder_var).pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(options_frame, text="还原开始菜单文件夹", variable=self.restore_folder_var).pack(anchor=tk.W, padx=15, pady=8)
         
         self.restore_db_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(options_frame, text="还原开始菜单数据库", variable=self.restore_db_var).pack(anchor=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(options_frame, text="还原开始菜单数据库", variable=self.restore_db_var).pack(anchor=tk.W, padx=15, pady=8)
         
         # 创建警告信息
-        warning_frame = ttk.LabelFrame(self.tab_restore, text="注意事项")
-        warning_frame.pack(fill=tk.X, pady=10, padx=10)
+        warning_frame = ttk.LabelFrame(content_frame, text="重要注意事项")
+        warning_frame.pack(fill=tk.X, pady=10, padx=5)
         
-        warning_text = """1. 还原操作需要管理员权限
-2. 还原过程中会临时关闭Windows资源管理器
-3. 还原完成后需要重启电脑才能生效
-4. 请确保备份文件完整无损"""
-        ttk.Label(warning_frame, text=warning_text, font=("SimHei", 9), justify=tk.LEFT).pack(padx=10, pady=5)
+        # 设置警告框样式
+        warning_frame.configure(style="Warning.TLabelframe")
+        self.style.configure("Warning.TLabelframe.Label", foreground="#d32f2f")
+        
+        warning_text = """⚠️ 1. 还原操作需要管理员权限
+⚠️ 2. 还原过程中会临时关闭Windows资源管理器
+⚠️ 3. 还原完成后需要重启电脑才能生效
+⚠️ 4. 请确保备份文件完整无损
+⚠️ 5. 还原操作可能会覆盖当前的开始菜单设置"""
+        ttk.Label(warning_frame, text=warning_text, font=("SimHei", 9, "bold"), 
+                 foreground="#d32f2f", justify=tk.LEFT).pack(padx=15, pady=8)
         
         # 创建还原按钮
-        button_frame = ttk.Frame(self.tab_restore)
-        button_frame.pack(fill=tk.X, pady=10, padx=10)
+        button_frame = ttk.Frame(content_frame)
+        button_frame.pack(fill=tk.X, pady=10, padx=5)
         
-        self.restore_button = ttk.Button(button_frame, text="开始还原", command=self.start_restore)
+        self.restore_button = ttk.Button(button_frame, text="开始还原", command=self.start_restore, width=15)
         self.restore_button.pack(side=tk.RIGHT, padx=5)
         
     def browse_source(self):
@@ -282,6 +438,8 @@ class WindowsUserFilesMover:
         
         self.log_text.config(state=tk.NORMAL)
         self.log_text.insert(tk.END, log_message)
+        
+        # 自动滚动到最新日志
         self.log_text.see(tk.END)
         self.log_text.config(state=tk.DISABLED)
         
@@ -291,6 +449,7 @@ class WindowsUserFilesMover:
     def is_admin(self):
         """检查是否以管理员身份运行"""
         try:
+            import ctypes
             return ctypes.windll.shell32.IsUserAnAdmin()
         except:
             return False
