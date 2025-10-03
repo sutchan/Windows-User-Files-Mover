@@ -22,6 +22,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 import threading
 from datetime import datetime
+import ctypes
 
 class WindowsUserFilesMover:
     def __init__(self, root):
@@ -399,29 +400,27 @@ class WindowsUserFilesMover:
         self.restore_button = ttk.Button(button_frame, text="开始还原", command=self.start_restore, width=15)
         self.restore_button.pack(side=tk.RIGHT, padx=5)
         
+    def browse_directory(self, title, variable, initialdir=None):
+        """通用目录浏览函数"""
+        directory = filedialog.askdirectory(title=title, initialdir=initialdir or variable.get())
+        if directory:
+            variable.set(directory)
+    
     def browse_source(self):
         """浏览源目录"""
-        directory = filedialog.askdirectory(title="选择源目录", initialdir=self.source_var.get())
-        if directory:
-            self.source_var.set(directory)
-            
+        self.browse_directory("选择源目录", self.source_var)
+        
     def browse_target(self):
         """浏览目标目录"""
-        directory = filedialog.askdirectory(title="选择目标目录", initialdir=self.target_var.get())
-        if directory:
-            self.target_var.set(directory)
-            
+        self.browse_directory("选择目标目录", self.target_var)
+        
     def browse_backup_path(self):
         """浏览备份路径"""
-        directory = filedialog.askdirectory(title="选择备份路径", initialdir=self.backup_path_var.get())
-        if directory:
-            self.backup_path_var.set(directory)
-            
+        self.browse_directory("选择备份路径", self.backup_path_var)
+        
     def browse_restore_path(self):
         """浏览还原路径"""
-        directory = filedialog.askdirectory(title="选择备份文件路径")
-        if directory:
-            self.restore_path_var.set(directory)
+        self.browse_directory("选择备份文件路径", self.restore_path_var, initialdir="")
             
     def select_all_apps(self):
         """全选应用列表"""
@@ -449,7 +448,6 @@ class WindowsUserFilesMover:
     def is_admin(self):
         """检查是否以管理员身份运行"""
         try:
-            import ctypes
             return ctypes.windll.shell32.IsUserAnAdmin()
         except:
             return False
@@ -464,7 +462,6 @@ class WindowsUserFilesMover:
         """开始文件迁移"""
         # 检查是否以管理员身份运行
         try:
-            import ctypes
             if not self.is_admin():
                 self.log("需要管理员权限才能执行文件迁移操作")
                 if messagebox.askyesno("权限不足", "需要管理员权限才能执行文件迁移操作，是否以管理员身份重启程序？"):
@@ -689,7 +686,6 @@ class WindowsUserFilesMover:
         """开始开始菜单还原"""
         # 检查是否以管理员身份运行
         try:
-            import ctypes
             if not self.is_admin():
                 self.log("需要管理员权限才能执行还原操作")
                 if messagebox.askyesno("权限不足", "需要管理员权限才能执行还原操作，是否以管理员身份重启程序？"):
