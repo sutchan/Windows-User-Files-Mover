@@ -9,7 +9,7 @@ Windows用户文件迁移和设置备份还原工具
 3. 开始菜单还原 - 还原开始菜单设置
 
 作者：SutChan
-版本：v1.10.1
+版本：v1.10.2
 项目地址：https://github.com/sutchan/Windows-User-Files-Mover
 """
 
@@ -56,7 +56,7 @@ class WindowsUserFilesMover:
         info_frame = ttk.Frame(title_frame)
         info_frame.pack(fill=tk.X, pady=2)
         
-        self.info_label = ttk.Label(info_frame, text="作者：SutChan    版本：v1.10.1    项目地址：https://github.com/sutchan/Windows-User-Files-Mover", 
+        self.info_label = ttk.Label(info_frame, text="作者：SutChan    版本：v1.10.2    项目地址：https://github.com/sutchan/Windows-User-Files-Mover", 
                                    font=("SimHei", 10), foreground="#5f6368")
         self.info_label.pack()
         
