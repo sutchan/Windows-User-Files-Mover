@@ -541,46 +541,36 @@ class WindowsUserFilesMover:
 
     def migrate_app_data(self, app_name, source_dir, target_dir):
         """迁移应用程序数据"""
-        # 常见的应用数据路径
         app_paths = [
             os.path.join(source_dir, "AppData", "Local", app_name),
             os.path.join(source_dir, "AppData", "LocalLow", app_name),
             os.path.join(source_dir, "AppData", "Roaming", app_name)
         ]
-        
+
         for app_path in app_paths:
             if os.path.exists(app_path):
-                # 构建目标路径
                 rel_path = os.path.relpath(app_path, source_dir)
                 target_path = os.path.join(target_dir, rel_path)
-                
-                # 确保目标路径的父目录存在
+
                 target_parent = os.path.dirname(target_path)
                 if not os.path.exists(target_parent):
                     os.makedirs(target_parent)
                     self.log(f"已创建目录: {target_parent}")
-                
-                # 迁移文件
+
                 self.log(f"正在迁移: {app_path} -> {target_path}")
-                
-                # 使用robocopy命令复制文件
+
                 try:
-                    cmd = f'robocopy "{app_path}" "{target_path}" /E /COPYALL /XJ'
-                    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-                    
-                    if result.returncode < 8:  # robocopy返回码小于8表示成功
-                        # 删除原始目录
+                    success, returncode, stderr = self._run_robocopy(app_path, target_path)
+                    if success:
                         self.log(f"正在删除原始目录: {app_path}")
                         shutil.rmtree(app_path, ignore_errors=True)
-                        
-                        # 创建目录联接
+
                         self.log(f"正在创建目录联接: {app_path} -> {target_path}")
-                        cmd = f'mklink /J "{app_path}" "{target_path}"'
-                        subprocess.run(cmd, shell=True, check=True)
+                        subprocess.run(f'mklink /J "{app_path}" "{target_path}"', shell=True, check=True)
                         self.log(f"成功迁移: {app_name}")
                     else:
-                        self.log(f"复制失败，返回码: {result.returncode}")
-                        self.log(f"错误输出: {result.stderr}")
+                        self.log(f"复制失败，返回码: {returncode}")
+                        self.log(f"错误输出: {stderr}")
                 except Exception as e:
                     self.log(f"迁移 {app_name} 时发生错误: {str(e)}")
         
@@ -651,19 +641,15 @@ class WindowsUserFilesMover:
         self.log("正在备份开始菜单文件夹...")
         
         try:
-            # 获取开始菜单文件夹路径
             start_menu_path = os.path.expandvars("%APPDATA%\Microsoft\Windows\Start Menu")
             target_path = os.path.join(backup_dir, "Start Menu")
             
-            # 使用robocopy命令复制文件
-            cmd = f'robocopy "{start_menu_path}" "{target_path}" /E /COPYALL /XJ'
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-            
-            if result.returncode < 8:  # robocopy返回码小于8表示成功
+            success, returncode, stderr = self._run_robocopy(start_menu_path, target_path)
+            if success:
                 self.log(f"开始菜单文件夹已备份到: {target_path}")
             else:
-                self.log(f"复制开始菜单文件夹失败，返回码: {result.returncode}")
-                self.log(f"错误输出: {result.stderr}")
+                self.log(f"复制开始菜单文件夹失败，返回码: {returncode}")
+                self.log(f"错误输出: {stderr}")
         except Exception as e:
             self.log(f"备份开始菜单文件夹时发生错误: {str(e)}")
             
@@ -672,24 +658,18 @@ class WindowsUserFilesMover:
         self.log("正在备份开始菜单数据库...")
         
         try:
-            # 获取数据库路径
             db_path = os.path.expandvars("%LOCALAPPDATA%\TileDataLayer\Database")
             
             if os.path.exists(db_path):
                 target_path = os.path.join(backup_dir, "TileDataLayer", "Database")
-                
-                # 确保目标路径存在
                 os.makedirs(os.path.dirname(target_path), exist_ok=True)
                 
-                # 使用robocopy命令复制文件
-                cmd = f'robocopy "{db_path}" "{target_path}" /E /COPYALL /XJ'
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-                
-                if result.returncode < 8:  # robocopy返回码小于8表示成功
+                success, returncode, stderr = self._run_robocopy(db_path, target_path)
+                if success:
                     self.log(f"开始菜单数据库已备份到: {target_path}")
                 else:
-                    self.log(f"复制开始菜单数据库失败，返回码: {result.returncode}")
-                    self.log(f"错误输出: {result.stderr}")
+                    self.log(f"复制开始菜单数据库失败，返回码: {returncode}")
+                    self.log(f"错误输出: {stderr}")
             else:
                 self.log(f"开始菜单数据库路径不存在: {db_path}")
         except Exception as e:
@@ -791,22 +771,16 @@ class WindowsUserFilesMover:
         self.log("正在还原开始菜单文件夹...")
         
         try:
-            # 检查备份文件夹是否存在
             backup_folder = os.path.join(restore_path, "Start Menu")
             
             if os.path.exists(backup_folder):
-                # 获取开始菜单文件夹路径
                 start_menu_path = os.path.expandvars("%APPDATA%\Microsoft\Windows\Start Menu")
-                
-                # 使用robocopy命令还原文件
-                cmd = f'robocopy "{backup_folder}" "{start_menu_path}" /E /COPYALL /XJ /IS /IT'
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-                
-                if result.returncode < 8:  # robocopy返回码小于8表示成功
-                    self.log(f"开始菜单文件夹已还原")
+                success, returncode, stderr = self._run_robocopy(backup_folder, start_menu_path, "/E /COPYALL /XJ /IS /IT")
+                if success:
+                    self.log("开始菜单文件夹已还原")
                 else:
-                    self.log(f"还原开始菜单文件夹失败，返回码: {result.returncode}")
-                    self.log(f"错误输出: {result.stderr}")
+                    self.log(f"还原开始菜单文件夹失败，返回码: {returncode}")
+                    self.log(f"错误输出: {stderr}")
             else:
                 self.log(f"开始菜单文件夹备份不存在: {backup_folder}")
         except Exception as e:
@@ -817,26 +791,19 @@ class WindowsUserFilesMover:
         self.log("正在还原开始菜单数据库...")
         
         try:
-            # 检查备份数据库是否存在
             backup_db = os.path.join(restore_path, "TileDataLayer", "Database")
             
             if os.path.exists(backup_db):
-                # 获取数据库路径
                 db_path = os.path.expandvars("%LOCALAPPDATA%\TileDataLayer\Database")
-                
-                # 确保目标路径存在
                 if not os.path.exists(db_path):
                     os.makedirs(db_path)
                     
-                # 使用robocopy命令还原文件
-                cmd = f'robocopy "{backup_db}" "{db_path}" /E /COPYALL /XJ /IS /IT'
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-                
-                if result.returncode < 8:  # robocopy返回码小于8表示成功
-                    self.log(f"开始菜单数据库已还原")
+                success, returncode, stderr = self._run_robocopy(backup_db, db_path, "/E /COPYALL /XJ /IS /IT")
+                if success:
+                    self.log("开始菜单数据库已还原")
                 else:
-                    self.log(f"还原开始菜单数据库失败，返回码: {result.returncode}")
-                    self.log(f"错误输出: {result.stderr}")
+                    self.log(f"还原开始菜单数据库失败，返回码: {returncode}")
+                    self.log(f"错误输出: {stderr}")
             else:
                 self.log(f"开始菜单数据库备份不存在: {backup_db}")
         except Exception as e:
@@ -855,7 +822,7 @@ if __name__ == "__main__":
     try:
         # Windows系统设置
         root.option_add("*Font", "SimHei 10")
-    except:
+    except Exception:
         pass
         
     # 创建应用程序实例
