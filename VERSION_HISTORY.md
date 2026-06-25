@@ -8,6 +8,19 @@
 
 ## 最新版本
 
+### v1.11.0 (2026-06-26)
+
+**更新内容：**
+- **修复硬编码路径问题**：所有文件中的硬编码 `Admin` 用户名已替换为动态获取（`%USERNAME%`、`<span style="color:orange">os.getlogin()</span>`、`$env:USERNAME`）
+- **添加文件日志功能**：Python 版本现在将日志同时输出到 UI 和日志文件
+- **改进错误处理**：修复所有裸 `except` 语句，使用具体的异常类型
+- **代码重构**：提取通用的 `_run_robocopy` 辅助方法，减少代码重复
+- **修复 Explorer 重启问题**：使用 `subprocess.Popen` 替代 `shell start` 命令
+- **改进磁盘空间检查**：批处理版本使用 WMIC 替代 `dir` 命令，支持多语言系统
+- **添加 PowerShell 版本**：`Move-DevConfigs.ps1` 支持参数化配置和 `-WhatIf` 预览
+- **修复路径处理**：改进 `run_as_admin` 方法，正确处理带空格的路径参数
+- **优化 robocopy 调用**：使用列表参数替代 shell 字符串，避免注入风险
+
 ### v1.10.2 (2025-10-03)
 
 **更新内容：**

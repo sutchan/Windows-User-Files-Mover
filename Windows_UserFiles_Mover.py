@@ -56,7 +56,7 @@ class WindowsUserFilesMover:
         info_frame = ttk.Frame(title_frame)
         info_frame.pack(fill=tk.X, pady=2)
         
-        self.info_label = ttk.Label(info_frame, text="作者：SutChan    版本：v1.10.2    项目地址：https://github.com/sutchan/Windows-User-Files-Mover", 
+        self.info_label = ttk.Label(info_frame, text="作者：SutChan    版本：v1.11.0    项目地址：https://github.com/sutchan/Windows-User-Files-Mover", 
                                    font=("SimHei", 10), foreground="#5f6368")
         self.info_label.pack()
         
