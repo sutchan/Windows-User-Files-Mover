@@ -9,7 +9,7 @@ Windows用户文件迁移和设置备份还原工具
 3. 开始菜单还原 - 还原开始菜单设置
 
 作者：SutChan
-版本：v1.10.2
+版本：v1.11.0
 项目地址：https://github.com/sutchan/Windows-User-Files-Mover
 """
 
@@ -223,7 +223,9 @@ class WindowsUserFilesMover:
         target_frame.pack(fill=tk.X, pady=8, padx=5)
         
         ttk.Label(target_frame, text="目标目录：").pack(side=tk.LEFT, padx=5, pady=2)
-        self.target_var = tk.StringVar(value=f"E:\\Users\\{os.getlogin()}")
+        # 动态获取用户名，兼容不同环境
+        username = os.environ.get('USERNAME') or os.getlogin()
+        self.target_var = tk.StringVar(value=f"E:\\Users\\{username}")
         self.target_entry = ttk.Entry(target_frame, textvariable=self.target_var, width=50)
         self.target_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=2)
         self.target_button = ttk.Button(target_frame, text="浏览...", command=self.browse_target)
@@ -629,10 +631,12 @@ class WindowsUserFilesMover:
         self.log("正在备份开始菜单布局...")
         
         try:
-            # 使用PowerShell命令备份开始菜单布局
             layout_file = os.path.join(backup_dir, "StartLayout.xml")
-            cmd = f'powershell -Command "Export-StartLayout -Path \"{layout_file}\""'
-            subprocess.run(cmd, shell=True, check=True)
+            subprocess.run(
+                ["powershell", "-Command", f"Export-StartLayout -Path '{layout_file}'"],
+                check=True,
+                capture_output=True
+            )
             self.log(f"开始菜单布局已备份到: {layout_file}")
         except Exception as e:
             self.log(f"备份开始菜单布局时发生错误: {str(e)}")
@@ -754,13 +758,14 @@ class WindowsUserFilesMover:
         self.log("正在还原开始菜单布局...")
         
         try:
-            # 检查布局文件是否存在
             layout_file = os.path.join(restore_path, "StartLayout.xml")
             
             if os.path.exists(layout_file):
-                # 使用PowerShell命令还原开始菜单布局
-                cmd = f'powershell -Command "Import-StartLayout -LayoutPath \"{layout_file}\" -MountPath \"C:\\""'
-                subprocess.run(cmd, shell=True, check=True)
+                subprocess.run(
+                    ["powershell", "-Command", f"Import-StartLayout -LayoutPath '{layout_file}' -MountPath 'C:\\'"],
+                    check=True,
+                    capture_output=True
+                )
                 self.log(f"开始菜单布局已从 {layout_file} 还原")
             else:
                 self.log(f"开始菜单布局文件不存在: {layout_file}")

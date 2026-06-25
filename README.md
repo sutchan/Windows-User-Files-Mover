@@ -7,7 +7,7 @@
   <a href="https://github.com/sutchan/Windows-User-Files-Mover">
     <img src="https://img.shields.io/badge/GitHub-项目主页-blue.svg">
   </a>
-  <img src="https://img.shields.io/badge/版本-v1.10.2-green.svg">
+  <img src="https://img.shields.io/badge/版本-v1.11.0-green.svg">
   <img src="https://img.shields.io/badge/支持系统-Windows%207%2F8%2F10%2F11-blue.svg">
 </div>
 
@@ -55,6 +55,12 @@ Windows-User-Files-Mover 是一款专为Windows系统设计的实用工具，旨
 - **生成方式**: 通过PyInstaller打包Python版本
 - **特点**: 独立可执行文件，无需安装Python环境
 - **适用场景**: 在没有Python环境的计算机上使用
+
+### 4. PowerShell版本
+- **文件**: `Move-DevConfigs.ps1`
+- **特点**: 专为开发工具配置文件夹迁移设计，支持 `-WhatIf` 预览，参数化配置
+- **依赖**: PowerShell 5.1+，需要管理员权限运行
+- **适用场景**: 迁移 `.vscode`、`.cursor` 等开发工具配置文件夹
 
 ## 🛠️ 快速开始
 
@@ -135,9 +141,9 @@ Windows-User-Files-Mover 是一款专为Windows系统设计的实用工具，旨
 
 ## 📌 版本信息
 
-- **当前版本**：v1.10.2
+- **当前版本**：v1.11.0
 - **作者**：SutChan
-- **最后更新**：2025-10-03
+- **最后更新**：2026-06-26
 
 ---
 

@@ -3,13 +3,13 @@ SETLOCAL ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 
 rem ==================================================
 rem Windows User Files Mover - 用户文件迁移工具
-rem 版本: v1.10.2
+rem 版本: v1.11.0
 rem 作者: SutChan
 rem 功能: 文件迁移与开始菜单备份还原
 rem ==================================================
 
 rem 配置区域 - 集中管理所有配置项
-SET "CONFIG_VERSION=v1.10.2"
+SET "CONFIG_VERSION=v1.11.0"
 SET "CONFIG_AUTHOR=SutChan"
 SET "CONFIG_TITLE=Windows User Files Mover 用户文件迁移工具"
 SET "CONFIG_DEFAULT_TARGET_DRIVE=E:"
