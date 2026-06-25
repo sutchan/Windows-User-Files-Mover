@@ -269,21 +269,25 @@ rem ==================================================
 :CHECK_DISK_SPACE
     SET "drive=%~1"
     
-    rem 获取磁盘剩余空间（单位：字节）
-    FOR /F "tokens=3" %%S IN ('dir %drive% ^| findstr /C:"可用字节"') DO (
+    rem 获取磁盘剩余空间（单位：字节）- 使用WMIC，语言无关
+    SET "free_space="
+    FOR /F "tokens=2 delims==" %%S IN ('wmic logicaldisk where "DeviceID=\"%drive%\"" get FreeSpace /VALUE 2^>nul') DO (
         SET "free_space=%%S"
     )
     
-    rem 移除千位分隔符
-    SET "free_space=%free_space:,=%"
+    IF NOT DEFINED free_space (
+        CALL :LOG_MESSAGE "警告: 无法获取磁盘剩余空间"
+        ECHO 警告: 无法获取磁盘剩余空间，继续操作...
+        EXIT /B 0
+    )
     
-    rem 检查是否有至少5GB可用空间
+    rem 检查是否有至少5GB可用空间 (5 * 1024 * 1024 * 1024 = 5368709120)
     IF %free_space% LSS 5368709120 (
-        CALL :LOG_MESSAGE "警告: 目标驱动器空间不足，建议至少有5GB可用空间"
+        CALL :LOG_MESSAGE "警告: 目标驱动器空间不足，建议至少有5GB可用空间 (可用: %free_space% 字节)"
         ECHO 警告: 目标驱动器空间不足，建议至少有5GB可用空间
         ECHO 继续操作可能导致迁移失败，是否继续？
         CHOICE /C YN /M "请选择: "
-        IF %ERRORLEVEL% EQU 2 (
+        IF !ERRORLEVEL! EQU 2 (
             CALL :LOG_MESSAGE "用户取消操作: 磁盘空间不足"
             EXIT /B 1
         )
@@ -396,31 +400,31 @@ CALL :LOG_MESSAGE "开始文件迁移流程，目标驱动器: %target_drive%"
 CALL :CLEAN_TEMP_FOLDERS
 
 rem 定义要迁移的文件夹列表 - 使用数组方式管理
-SET "migrate_list[0]=%USERPROFILE%\AppData\Local\Google|%target_drive%\Users\Admin\AppData\Local\Google"
-SET "migrate_list[1]=%USERPROFILE%\AppData\LocalLow\Google\GoogleEarth|%target_drive%\Dropbox\My\Google\GoogleEarth"
-SET "migrate_list[2]=%USERPROFILE%\AppData\Local\Adobe|%target_drive%\Users\Admin\AppData\Local\Adobe"
-SET "migrate_list[3]=%USERPROFILE%\AppData\Local\Apple Computer|%target_drive%\Users\Admin\AppData\Local\Apple Computer"
-SET "migrate_list[4]=%USERPROFILE%\AppData\Roaming\Apple Computer|%target_drive%\Users\Admin\AppData\Roaming\Apple Computer"
-SET "migrate_list[5]=%USERPROFILE%\AppData\Local\Wandoujia2|%target_drive%\Users\Admin\AppData\Local\Wandoujia2"
-SET "migrate_list[6]=%USERPROFILE%\AppData\Roaming\Wandoujia2|%target_drive%\Users\Admin\AppData\Roaming\Wandoujia2"
-SET "migrate_list[7]=%USERPROFILE%\AppData\Roaming\Winamp|%target_drive%\Users\Admin\AppData\Roaming\Winamp"
-SET "migrate_list[8]=%USERPROFILE%\AppData\Roaming\ytmediacenter|%target_drive%\Users\Admin\AppData\Roaming\ytmediacenter"
-SET "migrate_list[9]=%USERPROFILE%\AppData\Local\Yodao|%target_drive%\Users\Admin\AppData\Local\Yodao"
-SET "migrate_list[10]=%USERPROFILE%\AppData\Local\aef|%target_drive%\Users\Admin\AppData\Local\aef"
-SET "migrate_list[11]=%USERPROFILE%\AppData\Local\Netease|%target_drive%\Users\Admin\AppData\Local\Netease"
-SET "migrate_list[12]=%USERPROFILE%\AppData\LocalLow\SogouPY|%target_drive%\Users\Admin\AppData\LocalLow\SogouPY"
-SET "migrate_list[13]=%USERPROFILE%\AppData\LocalLow\SogouPY.users|%target_drive%\Users\Admin\AppData\LocalLow\SogouPY.users"
-SET "migrate_list[14]=%USERPROFILE%\AppData\Roaming\5kplayer|%target_drive%\Users\Admin\AppData\Roaming\5kplayer"
-SET "migrate_list[15]=%USERPROFILE%\AppData\Roaming\Adobe|%target_drive%\Users\Admin\AppData\Roaming\Adobe"
-SET "migrate_list[16]=%USERPROFILE%\AppData\Roaming\SketchUp|%target_drive%\Users\Admin\AppData\Roaming\SketchUp"
-SET "migrate_list[17]=%USERPROFILE%\AppData\Roaming\Teiron|%target_drive%\Users\Admin\AppData\Roaming\Teiron"
-SET "migrate_list[18]=%USERPROFILE%\AppData\Roaming\Kingsoft|%target_drive%\Users\Admin\AppData\Roaming\Kingsoft"
-SET "migrate_list[19]=%USERPROFILE%\AppData\Roaming\Lantern|%target_drive%\Users\Admin\AppData\Roaming\Lantern"
-SET "migrate_list[20]=%USERPROFILE%\AppData\Roaming\Tencent|%target_drive%\Users\Admin\AppData\Roaming\Tencent"
-SET "migrate_list[21]=%USERPROFILE%\AppData\Roaming\Thea Render|%target_drive%\Users\Admin\AppData\Roaming\Thea Render"
-SET "migrate_list[22]=%USERPROFILE%\AppData\Roaming\youku|%target_drive%\Users\Admin\AppData\Roaming\youku"
-SET "migrate_list[23]=%USERPROFILE%\AppData\Local\Microsoft|%target_drive%\Users\Admin\AppData\Local\Microsoft"
-SET "migrate_list[24]=%USERPROFILE%\AppData\Local\Comms|%target_drive%\Users\Admin\AppData\Local\Comms"
+SET "migrate_list[0]=%USERPROFILE%\AppData\Local\Google|%target_drive%\Users\%USERNAME%\AppData\Local\Google"
+SET "migrate_list[1]=%USERPROFILE%\AppData\LocalLow\Google\GoogleEarth|%target_drive%\Users\%USERNAME%\AppData\LocalLow\Google\GoogleEarth"
+SET "migrate_list[2]=%USERPROFILE%\AppData\Local\Adobe|%target_drive%\Users\%USERNAME%\AppData\Local\Adobe"
+SET "migrate_list[3]=%USERPROFILE%\AppData\Local\Apple Computer|%target_drive%\Users\%USERNAME%\AppData\Local\Apple Computer"
+SET "migrate_list[4]=%USERPROFILE%\AppData\Roaming\Apple Computer|%target_drive%\Users\%USERNAME%\AppData\Roaming\Apple Computer"
+SET "migrate_list[5]=%USERPROFILE%\AppData\Local\Wandoujia2|%target_drive%\Users\%USERNAME%\AppData\Local\Wandoujia2"
+SET "migrate_list[6]=%USERPROFILE%\AppData\Roaming\Wandoujia2|%target_drive%\Users\%USERNAME%\AppData\Roaming\Wandoujia2"
+SET "migrate_list[7]=%USERPROFILE%\AppData\Roaming\Winamp|%target_drive%\Users\%USERNAME%\AppData\Roaming\Winamp"
+SET "migrate_list[8]=%USERPROFILE%\AppData\Roaming\ytmediacenter|%target_drive%\Users\%USERNAME%\AppData\Roaming\ytmediacenter"
+SET "migrate_list[9]=%USERPROFILE%\AppData\Local\Yodao|%target_drive%\Users\%USERNAME%\AppData\Local\Yodao"
+SET "migrate_list[10]=%USERPROFILE%\AppData\Local\aef|%target_drive%\Users\%USERNAME%\AppData\Local\aef"
+SET "migrate_list[11]=%USERPROFILE%\AppData\Local\Netease|%target_drive%\Users\%USERNAME%\AppData\Local\Netease"
+SET "migrate_list[12]=%USERPROFILE%\AppData\LocalLow\SogouPY|%target_drive%\Users\%USERNAME%\AppData\LocalLow\SogouPY"
+SET "migrate_list[13]=%USERPROFILE%\AppData\LocalLow\SogouPY.users|%target_drive%\Users\%USERNAME%\AppData\LocalLow\SogouPY.users"
+SET "migrate_list[14]=%USERPROFILE%\AppData\Roaming\5kplayer|%target_drive%\Users\%USERNAME%\AppData\Roaming\5kplayer"
+SET "migrate_list[15]=%USERPROFILE%\AppData\Roaming\Adobe|%target_drive%\Users\%USERNAME%\AppData\Roaming\Adobe"
+SET "migrate_list[16]=%USERPROFILE%\AppData\Roaming\SketchUp|%target_drive%\Users\%USERNAME%\AppData\Roaming\SketchUp"
+SET "migrate_list[17]=%USERPROFILE%\AppData\Roaming\Teiron|%target_drive%\Users\%USERNAME%\AppData\Roaming\Teiron"
+SET "migrate_list[18]=%USERPROFILE%\AppData\Roaming\Kingsoft|%target_drive%\Users\%USERNAME%\AppData\Roaming\Kingsoft"
+SET "migrate_list[19]=%USERPROFILE%\AppData\Roaming\Lantern|%target_drive%\Users\%USERNAME%\AppData\Roaming\Lantern"
+SET "migrate_list[20]=%USERPROFILE%\AppData\Roaming\Tencent|%target_drive%\Users\%USERNAME%\AppData\Roaming\Tencent"
+SET "migrate_list[21]=%USERPROFILE%\AppData\Roaming\Thea Render|%target_drive%\Users\%USERNAME%\AppData\Roaming\Thea Render"
+SET "migrate_list[22]=%USERPROFILE%\AppData\Roaming\youku|%target_drive%\Users\%USERNAME%\AppData\Roaming\youku"
+SET "migrate_list[23]=%USERPROFILE%\AppData\Local\Microsoft|%target_drive%\Users\%USERNAME%\AppData\Local\Microsoft"
+SET "migrate_list[24]=%USERPROFILE%\AppData\Local\Comms|%target_drive%\Users\%USERNAME%\AppData\Local\Comms"
 
 ECHO.
 ECHO 开始迁移文件...
