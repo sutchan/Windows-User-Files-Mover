@@ -115,6 +115,9 @@ class WindowsUserFilesMover:
         # 配置右键菜单
         self.setup_context_menu()
         
+        # 初始化日志文件
+        self.log_file = os.path.join(os.getcwd(), "Windows_UserFiles_Mover.log")
+        
         # 记录开始时间
         self.log("应用程序启动成功")
         
@@ -220,7 +223,7 @@ class WindowsUserFilesMover:
         target_frame.pack(fill=tk.X, pady=8, padx=5)
         
         ttk.Label(target_frame, text="目标目录：").pack(side=tk.LEFT, padx=5, pady=2)
-        self.target_var = tk.StringVar(value="E:\\Users\\Admin")
+        self.target_var = tk.StringVar(value=f"E:\\Users\\{os.getlogin()}")
         self.target_entry = ttk.Entry(target_frame, textvariable=self.target_var, width=50)
         self.target_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5, pady=2)
         self.target_button = ttk.Button(target_frame, text="浏览...", command=self.browse_target)
@@ -431,25 +434,29 @@ class WindowsUserFilesMover:
         self.app_listbox.selection_clear(0, tk.END)
         
     def log(self, message):
-        """记录日志信息"""
+        """记录日志信息（同时输出到UI和日志文件）"""
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
         
+        # 写入UI
         self.log_text.config(state=tk.NORMAL)
         self.log_text.insert(tk.END, log_message)
-        
-        # 自动滚动到最新日志
         self.log_text.see(tk.END)
         self.log_text.config(state=tk.DISABLED)
-        
-        # 刷新界面
         self.root.update_idletasks()
+        
+        # 写入日志文件
+        try:
+            with open(self.log_file, "a", encoding="utf-8") as f:
+                f.write(log_message)
+        except Exception:
+            pass
         
     def is_admin(self):
         """检查是否以管理员身份运行"""
         try:
             return ctypes.windll.shell32.IsUserAnAdmin()
-        except:
+        except Exception:
             return False
             
     def run_as_admin(self):
@@ -468,7 +475,7 @@ class WindowsUserFilesMover:
                     self.run_as_admin()
                     sys.exit()
                 return
-        except ImportError:
+        except Exception:
             self.log("警告：无法检查管理员权限，请确保以管理员身份运行")
         
         # 获取源目录和目标目录
@@ -526,6 +533,12 @@ class WindowsUserFilesMover:
         # 启动迁移线程
         threading.Thread(target=migrate_thread, daemon=True).start()
         
+    def _run_robocopy(self, src, dst, extra_args="/E /COPYALL /XJ"):
+        """运行robocopy命令的通用方法"""
+        cmd = f'robocopy "{src}" "{dst}" {extra_args}'
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        return result.returncode < 8, result.returncode, result.stderr
+
     def migrate_app_data(self, app_name, source_dir, target_dir):
         """迁移应用程序数据"""
         # 常见的应用数据路径
@@ -692,7 +705,7 @@ class WindowsUserFilesMover:
                     self.run_as_admin()
                     sys.exit()
                 return
-        except ImportError:
+        except Exception:
             self.log("警告：无法检查管理员权限，请确保以管理员身份运行")
         
         # 获取还原路径
@@ -736,7 +749,7 @@ class WindowsUserFilesMover:
                 
                 # 重启Windows资源管理器
                 self.log("正在重启Windows资源管理器...")
-                subprocess.run('start explorer.exe', shell=True, capture_output=True, text=True)
+                subprocess.Popen("explorer.exe")
                 
                 self.log("开始菜单还原操作已完成")
                 messagebox.showinfo("完成", "开始菜单还原已成功完成！\n请重启电脑以确保更改生效。")
@@ -744,8 +757,8 @@ class WindowsUserFilesMover:
                 self.log(f"还原过程中发生错误: {str(e)}")
                 # 尝试重启资源管理器
                 try:
-                    subprocess.run('start explorer.exe', shell=True)
-                except:
+                    subprocess.Popen("explorer.exe")
+                except Exception:
                     pass
                 messagebox.showerror("错误", f"还原过程中发生错误: {str(e)}")
             finally:
