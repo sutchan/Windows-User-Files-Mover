@@ -31,7 +31,8 @@ function navigateToPage(pageName) {
         'profiles': '迁移配置',
         'history': '迁移历史',
         'symlinks': '符号链接管理',
-        'settings': '设置'
+        'settings': '设置',
+        'styleguide': '设计系统'
     };
     
     const pageTitle = document.getElementById('pageTitle');

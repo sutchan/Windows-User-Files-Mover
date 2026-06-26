@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 用户文件迁移工具</title>
+    <link rel="stylesheet" href="css/win11-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Windows 11 窗口 -->
+    <div class="win11-window">
+        <!-- 标题栏 -->
+        <div class="title-bar">
+            <div class="title-bar-icon">
+                <i class="fas fa-folder-move"></i>
+            </div>
+            <div class="title-bar-text">Windows 用户文件迁移工具</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button minimize" title="最小化">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="title-bar-button maximize" title="最大化">
+                    <i class="fas fa-square"></i>
+                </button>
+                <button class="title-bar-button close" title="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 应用主体 -->
+        <div class="app-container">
+            <!-- 左侧导航Pane -->
+            <div class="navigation-pane">
+                <div class="nav-header">
+                    <span class="nav-title">导航</span>
+                </div>
+                <div class="nav-items">
+                    <a href="#" class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span>仪表盘</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="migrate">
+                        <i class="fas fa-play nav-icon"></i>
+                        <span>开始迁移</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="profiles">
+                        <i class="fas fa-save nav-icon"></i>
+                        <span>迁移配置</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="history">
+                        <i class="fas fa-history nav-icon"></i>
+                        <span>迁移历史</span>
+                    </a>
+                    
+                    <div class="nav-separator"></div>
+                    
+                    <div class="nav-section-title">高级功能</div>
+                    <a href="#" class="nav-item" data-page="symlinks">
+                        <i class="fas fa-link nav-icon"></i>
+                        <span>符号链接管理</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="settings">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span>设置</span>
+                    </a>
+                </div>
+                
+                <div class="nav-footer">
+                    <div class="nav-footer-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>版本 1.11.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="content-area">
+                <!-- 面包屑导航 -->
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">首页</span>
+                    <span class="breadcrumb-separator">></span>
+                    <span class="breadcrumb-item active">仪表盘</span>
+                </div>
+
+                <!-- 仪表盘页面 -->
+                <div class="page-content" id="dashboard-page">
+                    <!-- 欢迎横幅 -->
+                    <div class="welcome-banner">
+                        <div class="welcome-content">
+                            <h1 class="welcome-title">欢迎使用 Windows 用户文件迁移工具</h1>
+                            <p class="welcome-subtitle">安全、高效地将用户文件从系统盘迁移到其他驱动器</p>
+                        </div>
+                        <div class="welcome-actions">
+                            <button class="win11-button primary" onclick="navigateTo('migrate')">
+                                <i class="fas fa-play"></i>
+                                开始迁移
+                            </button>
+                            <button class="win11-button">
+                                <i class="fas fa-book"></i>
+                                查看文档
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 系统状态卡片 -->
+                    <div class="status-cards">
+                        <div class="status-card">
+                            <div class="status-card-icon info">
+                                <i class="fas fa-hdd"></i>
+                            </div>
+                            <div class="status-card-content">
+                                <div class="status-card-label">系统盘 (C:)</div>
+                                <div class="status-card-value">78% 已使用</div>
+                                <div class="status-card-bar">
+                                    <div class="status-card-bar-fill" style="width: 78%"></div>
+                                </div>
+                                <div class="status-card-detail">125 GB / 160 GB</div>
+                            </div>
+                        </div>
+
+                        <div class="status-card">
+                            <div class="status-card-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="status-card-content">
+                                <div class="status-card-label">迁移状态</div>
+                                <div class="status-card-value">准备就绪</div>
+                                <div class="status-card-detail">上次迁移: 2026-06-20</div>
+                            </div>
+                        </div>
+
+                        <div class="status-card">
+                            <div class="status-card-icon warning">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <div class="status-card-content">
+                                <div class="status-card-label">可迁移文件夹</div>
+                                <div class="status-card-value">6 个</div>
+                                <div class="status-card-detail">总计约 45.2 GB</div>
+                            </div>
+                        </div>
+
+                        <div class="status-card">
+                            <div class="status-card-icon primary">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="status-card-content">
+                                <div class="status-card-label">预计时间</div>
+                                <div class="status-card-value">约 15 分钟</div>
+                                <div class="status-card-detail">基于上次迁移速度</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速操作 -->
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">快速操作</h2>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-action-card" onclick="navigateTo('migrate')">
+                                <i class="fas fa-rocket"></i>
+                                <span>快速迁移</span>
+                                <span class="quick-action-desc">使用默认配置开始迁移</span>
+                            </button>
+                            <button class="quick-action-card" onclick="navigateTo('profiles')">
+                                <i class="fas fa-save"></i>
+                                <span>加载配置</span>
+                                <span class="quick-action-desc">使用已保存的迁移配置</span>
+                            </button>
+                            <button class="quick-action-card" onclick="navigateTo('symlinks')">
+                                <i class="fas fa-link"></i>
+                                <span>管理链接</span>
+                                <span class="quick-action-desc">查看和管理符号链接</span>
+                            </button>
+                            <button class="quick-action-card" onclick="navigateTo('settings')">
+                                <i class="fas fa-sliders-h"></i>
+                                <span>高级设置</span>
+                                <span class="quick-action-desc">自定义迁移选项</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 最近迁移 -->
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">最近迁移</h2>
+                            <a href="#" class="section-action" onclick="navigateTo('history')">查看全部</a>
+                        </div>
+                        <div class="recent-list">
+                            <div class="recent-item">
+                                <div class="recent-item-icon">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+                                <div class="recent-item-content">
+                                    <div class="recent-item-title">文档文件夹</div>
+                                    <div class="recent-item-meta">
+                                        <span><i class="fas fa-calendar"></i> 2026-06-20 14:30</span>
+                                        <span><i class="fas fa-file"></i> 1,234 个文件</span>
+                                        <span><i class="fas fa-weight-hanging"></i> 2.5 GB</span>
+                                    </div>
+                                </div>
+                                <div class="recent-item-status success">
+                                    <i class="fas fa-check-circle"></i>
+                                    成功
+                                </div>
+                            </div>
+
+                            <div class="recent-item">
+                                <div class="recent-item-icon">
+                                    <i class="fas fa-images"></i>
+                                </div>
+                                <div class="recent-item-content">
+                                    <div class="recent-item-title">图片文件夹</div>
+                                    <div class="recent-item-meta">
+                                        <span><i class="fas fa-calendar"></i> 2026-06-18 10:15</span>
+                                        <span><i class="fas fa-file"></i> 5,678 个文件</span>
+                                        <span><i class="fas fa-weight-hanging"></i> 8.3 GB</span>
+                                    </div>
+                                </div>
+                                <div class="recent-item-status success">
+                                    <i class="fas fa-check-circle"></i>
+                                    成功
+                                </div>
+                            </div>
+
+                            <div class="recent-item">
+                                <div class="recent-item-icon">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <div class="recent-item-content">
+                                    <div class="recent-item-title">音乐文件夹</div>
+                                    <div class="recent-item-meta">
+                                        <span><i class="fas fa-calendar"></i> 2026-06-15 16:45</span>
+                                        <span><i class="fas fa-file"></i> 892 个文件</span>
+                                        <span><i class="fas fa-weight-hanging"></i> 3.1 GB</span>
+                                    </div>
+                                </div>
+                                <div class="recent-item-status warning">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    部分成功
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 迁移向导页面 -->
+                <div class="page-content hidden" id="migrate-page">
+                    <div class="page-header">
+                        <h1 class="page-title"><i class="fas fa-play"></i> 开始迁移</h1>
+                        <p class="page-description">选择要迁移的文件夹并配置迁移选项</p>
+                    </div>
+
+                    <!-- 步骤指示器 -->
+                    <div class="wizard-steps">
+                        <div class="wizard-step active" data-step="1">
+                            <div class="step-indicator">1</div>
+                            <div class="step-label">选择源目录</div>
+                        </div>
+                        <div class="wizard-connector"></div>
+                        <div class="wizard-step" data-step="2">
+                            <div class="step-indicator">2</div>
+                            <div class="step-label">选择目标目录</div>
+                        </div>
+                        <div class="wizard-connector"></div>
+                        <div class="wizard-step" data-step="3">
+                            <div class="step-indicator">3</div>
+                            <div class="step-label">配置选项</div>
+                        </div>
+                        <div class="wizard-connector"></div>
+                        <div class="wizard-step" data-step="4">
+                            <div class="step-indicator">4</div>
+                            <div class="step-label">确认并执行</div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤内容 -->
+                    <div class="wizard-content">
+                        <!-- 步骤 1: 选择源目录 -->
+                        <div class="wizard-step-content active" id="step-1">
+                            <h3><i class="fas fa-folder-open"></i> 选择要迁移的用户文件夹</h3>
+                            <p class="step-description">选择位于系统盘（C:）的用户文件夹</p>
+                            
+                            <div class="folder-selection">
+                                <div class="folder-item">
+                                    <input type="checkbox" id="folder-documents" checked>
+                                    <label for="folder-documents">
+                                        <i class="fas fa-file-word"></i>
+                                        <span class="folder-name">文档</span>
+                                        <span class="folder-path">C:\Users\Username\Documents</span>
+                                        <span class="folder-size">2.5 GB</span>
+                                    </label>
+                                </div>
+
+                                <div class="folder-item">
+                                    <input type="checkbox" id="folder-pictures">
+                                    <label for="folder-pictures">
+                                        <i class="fas fa-file-image"></i>
+                                        <span class="folder-name">图片</span>
+                                        <span class="folder-path">C:\Users\Username\Pictures</span>
+                                        <span class="folder-size">8.3 GB</span>
+                                    </label>
+                                </div>
+
+                                <div class="folder-item">
+                                    <input type="checkbox" id="folder-music">
+                                    <label for="folder-music">
+                                        <i class="fas fa-file-audio"></i>
+                                        <span class="folder-name">音乐</span>
+                                        <span class="folder-path">C:\Users\Username\Music</span>
+                                        <span class="folder-size">3.1 GB</span>
+                                    </label>
+                                </div>
+
+                                <div class="folder-item">
+                                    <input type="checkbox" id="folder-videos">
+                                    <label for="folder-videos">
+                                        <i class="fas fa-file-video"></i>
+                                        <span class="folder-name">视频</span>
+                                        <span class="folder-path">C:\Users\Username\Videos</span>
+                                        <span class="folder-size">15.7 GB</span>
+                                    </label>
+                                </div>
+
+                                <div class="folder-item">
+                                    <input type="checkbox" id="folder-downloads">
+                                    <label for="folder-downloads">
+                                        <i class="fas fa-file-download"></i>
+                                        <span class="folder-name">下载</span>
+                                        <span class="folder-path">C:\Users\Username\Downloads</span>
+                                        <span class="folder-size">5.2 GB</span>
+                                    </label>
+                                </div>
+
+                                <div class="folder-item">
+                                    <input type="checkbox" id="folder-desktop">
+                                    <label for="folder-desktop">
+                                        <i class="fas fa-desktop"></i>
+                                        <span class="folder-name">桌面</span>
+                                        <span class="folder-path">C:\Users\Username\Desktop</span>
+                                        <span class="folder-size">1.8 GB</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 步骤 2: 选择目标目录 -->
+                        <div class="wizard-step-content" id="step-2">
+                            <h3><i class="fas fa-hdd"></i> 选择迁移目标位置</h3>
+                            <p class="step-description">选择非系统盘的目标位置</p>
+                            
+                            <div class="target-selection">
+                                <div class="target-option">
+                                    <input type="radio" name="target-drive" id="target-e" checked>
+                                    <label for="target-e">
+                                        <i class="fas fa-hard-drive"></i>
+                                        <span class="drive-letter">E:</span>
+                                        <span class="drive-info">数据盘 (500 GB 可用)</span>
+                                    </label>
+                                </div>
+
+                                <div class="target-option">
+                                    <input type="radio" name="target-drive" id="target-f">
+                                    <label for="target-f">
+                                        <i class="fas fa-hard-drive"></i>
+                                        <span class="drive-letter">F:</span>
+                                        <span class="drive-info">备份盘 (200 GB 可用)</span>
+                                    </label>
+                                </div>
+
+                                <div class="target-custom">
+                                    <label>或自定义路径:</label>
+                                    <div class="path-input-group">
+                                        <input type="text" class="win11-input" placeholder="D:\MyData" value="E:\Users">
+                                        <button class="win11-button"><i class="fas fa-folder-open"></i> 浏览</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 步骤 3: 配置选项 -->
+                        <div class="wizard-step-content" id="step-3">
+                            <h3><i class="fas fa-cog"></i> 配置迁移选项</h3>
+                            <p class="step-description">自定义迁移行为</p>
+                            
+                            <div class="options-list">
+                                <div class="option-item">
+                                    <div class="option-info">
+                                        <i class="fas fa-copy"></i>
+                                        <div>
+                                            <div class="option-title">复制后验证</div>
+                                            <div class="option-desc">比较源文件和目标文件，确保数据完整性</div>
+                                        </div>
+                                    </div>
+                                    <label class="win11-toggle">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="option-item">
+                                    <div class="option-info">
+                                        <i class="fas fa-link"></i>
+                                        <div>
+                                            <div class="option-title">创建符号链接</div>
+                                            <div class="option-desc">在原位置创建符号链接，保持应用兼容性</div>
+                                        </div>
+                                    </div>
+                                    <label class="win11-toggle">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="option-item">
+                                    <div class="option-info">
+                                        <i class="fas fa-trash"></i>
+                                        <div>
+                                            <div class="option-title">迁移后删除源文件</div>
+                                            <div class="option-desc">成功迁移后删除源位置的文件（释放空间）</div>
+                                        </div>
+                                    </div>
+                                    <label class="win11-toggle">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="option-item">
+                                    <div class="option-info">
+                                        <i class="fas fa-bolt"></i>
+                                        <div>
+                                            <div class="option-title">使用快速模式</div>
+                                            <div class="option-desc">跳过已有文件，加快迁移速度</div>
+                                        </div>
+                                    </div>
+                                    <label class="win11-toggle">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 步骤 4: 确认并执行 -->
+                        <div class="wizard-step-content" id="step-4">
+                            <h3><i class="fas fa-clipboard-check"></i> 确认迁移设置</h3>
+                            <p class="step-description">请检查以下设置，确认无误后点击"开始迁移"</p>
+                            
+                            <div class="confirmation-summary">
+                                <div class="summary-section">
+                                    <h4><i class="fas fa-folder"></i> 要迁移的文件夹</h4>
+                                    <ul>
+                                        <li>文档 (2.5 GB)</li>
+                                    </ul>
+                                </div>
+
+                                <div class="summary-section">
+                                    <h4><i class="fas fa-hdd"></i> 目标位置</h4>
+                                    <p>E:\Users\Username</p>
+                                </div>
+
+                                <div class="summary-section">
+                                    <h4><i class="fas fa-cog"></i> 迁移选项</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check-circle success"></i> 复制后验证</li>
+                                        <li><i class="fas fa-check-circle success"></i> 创建符号链接</li>
+                                        <li><i class="fas fa-check-circle success"></i> 使用快速模式</li>
+                                        <li><i class="fas fa-times-circle danger"></i> 迁移后删除源文件</li>
+                                    </ul>
+                                </div>
+
+                                <div class="warning-box">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <div>
+                                        <strong>注意:</strong> 迁移过程可能需要几分钟到几十分钟，取决于文件大小。请确保目标磁盘有足够空间。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 向导操作按钮 -->
+                    <div class="wizard-actions">
+                        <button class="win11-button" id="wizard-prev" disabled>
+                            <i class="fas fa-arrow-left"></i> 上一步
+                        </button>
+                        <button class="win11-button primary" id="wizard-next">
+                            下一步 <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="win11-button primary hidden" id="wizard-start">
+                            <i class="fas fa-rocket"></i> 开始迁移
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 配置管理页面 -->
+                <div class="page-content hidden" id="profiles-page">
+                    <div class="page-header">
+                        <h1 class="page-title"><i class="fas fa-save"></i> 迁移配置</h1>
+                        <p class="page-description">管理已保存的迁移配置</p>
+                    </div>
+
+                    <div class="profiles-toolbar">
+                        <button class="win11-button primary">
+                            <i class="fas fa-plus"></i> 新建配置
+                        </button>
+                        <button class="win11-button">
+                            <i class="fas fa-upload"></i> 导入
+                        </button>
+                    </div>
+
+                    <div class="profiles-grid">
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <i class="fas fa-star"></i>
+                                <span class="profile-name">默认配置</span>
+                            </div>
+                            <div class="profile-body">
+                                <div class="profile-meta">
+                                    <span><i class="fas fa-folder"></i> 6 个文件夹</span>
+                                    <span><i class="fas fa-hdd"></i> 目标: E:\Users</span>
+                                </div>
+                                <div class="profile-options">
+                                    <span><i class="fas fa-check"></i> 验证文件</span>
+                                    <span><i class="fas fa-check"></i> 创建链接</span>
+                                </div>
+                            </div>
+                            <div class="profile-footer">
+                                <span class="profile-date">更新于 2026-06-20</span>
+                                <div class="profile-actions">
+                                    <button class="win11-button small">编辑</button>
+                                    <button class="win11-button small primary">使用</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <i class="fas fa-bolt"></i>
+                                <span class="profile-name">快速迁移</span>
+                            </div>
+                            <div class="profile-body">
+                                <div class="profile-meta">
+                                    <span><i class="fas fa-folder"></i> 3 个文件夹</span>
+                                    <span><i class="fas fa-hdd"></i> 目标: D:\Data</span>
+                                </div>
+                                <div class="profile-options">
+                                    <span><i class="fas fa-check"></i> 快速模式</span>
+                                </div>
+                            </div>
+                            <div class="profile-footer">
+                                <span class="profile-date">更新于 2026-06-15</span>
+                                <div class="profile-actions">
+                                    <button class="win11-button small">编辑</button>
+                                    <button class="win11-button small primary">使用</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 历史记录页面 -->
+                <div class="page-content hidden" id="history-page">
+                    <div class="page-header">
+                        <h1 class="page-title"><i class="fas fa-history"></i> 迁移历史</h1>
+                        <p class="page-description">查看过去的迁移记录</p>
+                    </div>
+
+                    <div class="history-filters">
+                        <button class="win11-button small active">全部</button>
+                        <button class="win11-button small">成功</button>
+                        <button class="win11-button small">失败</button>
+                        <button class="win11-button small">进行中</button>
+                    </div>
+
+                    <div class="history-list">
+                        <div class="history-item">
+                            <div class="history-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-title">文档文件夹迁移</div>
+                                <div class="history-meta">
+                                    <span><i class="fas fa-calendar"></i> 2026-06-20 14:30</span>
+                                    <span><i class="fas fa-file"></i> 1,234 个文件</span>
+                                    <span><i class="fas fa-weight-hanging"></i> 2.5 GB</span>
+                                    <span><i class="fas fa-clock"></i> 用时 8 分钟</span>
+                                </div>
+                            </div>
+                            <div class="history-actions">
+                                <button class="win11-button small">查看详情</button>
+                                <button class="win11-button small danger">删除记录</button>
+                            </div>
+                        </div>
+
+                        <div class="history-item">
+                            <div class="history-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-title">图片文件夹迁移</div>
+                                <div class="history-meta">
+                                    <span><i class="fas fa-calendar"></i> 2026-06-18 10:15</span>
+                                    <span><i class="fas fa-file"></i> 5,678 个文件</span>
+                                    <span><i class="fas fa-weight-hanging"></i> 8.3 GB</span>
+                                    <span><i class="fas fa-clock"></i> 用时 25 分钟</span>
+                                </div>
+                            </div>
+                            <div class="history-actions">
+                                <button class="win11-button small">查看详情</button>
+                                <button class="win11-button small danger">删除记录</button>
+                            </div>
+                        </div>
+
+                        <div class="history-item">
+                            <div class="history-icon warning">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-title">音乐文件夹迁移</div>
+                                <div class="history-meta">
+                                    <span><i class="fas fa-calendar"></i> 2026-06-15 16:45</span>
+                                    <span><i class="fas fa-file"></i> 892 个文件</span>
+                                    <span><i class="fas fa-weight-hanging"></i> 3.1 GB</span>
+                                    <span><i class="fas fa-clock"></i> 用时 12 分钟</span>
+                                </div>
+                                <div class="history-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    3 个文件复制失败（权限不足）
+                                </div>
+                            </div>
+                            <div class="history-actions">
+                                <button class="win11-button small">查看详情</button>
+                                <button class="win11-button small">重试</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 符号链接管理页面 -->
+                <div class="page-content hidden" id="symlinks-page">
+                    <div class="page-header">
+                        <h1 class="page-title"><i class="fas fa-link"></i> 符号链接管理</h1>
+                        <p class="page-description">查看和管理已创建的符号链接</p>
+                    </div>
+
+                    <div class="symlinks-toolbar">
+                        <button class="win11-button">
+                            <i class="fas fa-sync-alt"></i> 刷新
+                        </button>
+                        <button class="win11-button danger">
+                            <i class="fas fa-trash"></i> 批量删除
+                        </button>
+                    </div>
+
+                    <div class="symlinks-list">
+                        <div class="symlink-item">
+                            <div class="symlink-icon">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <div class="symlink-content">
+                                <div class="symlink-name">文档</div>
+                                <div class="symlink-paths">
+                                    <span class="symlink-source">C:\Users\Username\Documents</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span class="symlink-target">E:\Users\Username\Documents</span>
+                                </div>
+                            </div>
+                            <div class="symlink-status active">
+                                <i class="fas fa-check-circle"></i> 正常
+                            </div>
+                            <div class="symlink-actions">
+                                <button class="win11-button small">打开</button>
+                                <button class="win11-button small danger">删除</button>
+                            </div>
+                        </div>
+
+                        <div class="symlink-item">
+                            <div class="symlink-icon">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <div class="symlink-content">
+                                <div class="symlink-name">图片</div>
+                                <div class="symlink-paths">
+                                    <span class="symlink-source">C:\Users\Username\Pictures</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span class="symlink-target">E:\Users\Username\Pictures</span>
+                                </div>
+                            </div>
+                            <div class="symlink-status active">
+                                <i class="fas fa-check-circle"></i> 正常
+                            </div>
+                            <div class="symlink-actions">
+                                <button class="win11-button small">打开</button>
+                                <button class="win11-button small danger">删除</button>
+                            </div>
+                        </div>
+
+                        <div class="symlink-item broken">
+                            <div class="symlink-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="symlink-content">
+                                <div class="symlink-name">桌面</div>
+                                <div class="symlink-paths">
+                                    <span class="symlink-source">C:\Users\Username\Desktop</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span class="symlink-target">（已断开）</span>
+                                </div>
+                            </div>
+                            <div class="symlink-status broken">
+                                <i class="fas fa-times-circle"></i> 断开
+                            </div>
+                            <div class="symlink-actions">
+                                <button class="win11-button small">修复</button>
+                                <button class="win11-button small danger">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设置页面 -->
+                <div class="page-content hidden" id="settings-page">
+                    <div class="page-header">
+                        <h1 class="page-title"><i class="fas fa-cog"></i> 设置</h1>
+                        <p class="page-description">自定义应用行为</p>
+                    </div>
+
+                    <div class="settings-sections">
+                        <div class="settings-group">
+                            <h3 class="settings-group-title"><i class="fas fa-sliders-h"></i> 常规设置</h3>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">启动时检查更新</div>
+                                    <div class="setting-desc">自动检查并提示更新</div>
+                                </div>
+                                <label class="win11-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">迁移后验证文件</div>
+                                    <div class="setting-desc">比较源文件和目标文件，确保数据完整性</div>
+                                </div>
+                                <label class="win11-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">创建符号链接</div>
+                                    <div class="setting-desc">默认启用符号链接创建</div>
+                                </div>
+                                <label class="win11-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="settings-group-title"><i class="fas fa-shield-alt"></i> 安全设置</h3>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">需要管理员权限</div>
+                                    <div class="setting-desc">执行迁移操作前请求管理员权限</div>
+                                </div>
+                                <label class="win11-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">操作前确认</div>
+                                    <div class="setting-desc">执行删除或覆盖操作前显示确认对话框</div>
+                                </div>
+                                <label class="win11-toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="settings-group-title"><i class="fas fa-palette"></i> 界面设置</h3>
+                            
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">主题</div>
+                                    <div class="setting-desc">选择应用主题</div>
+                                </div>
+                                <select class="win11-select">
+                                    <option>系统默认</option>
+                                    <option>浅色</option>
+                                    <option>深色</option>
+                                </select>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <div class="setting-label">语言</div>
+                                    <div class="setting-desc">选择界面语言</div>
+                                </div>
+                                <select class="win11-select">
+                                    <option>简体中文</option>
+                                    <option>English</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button class="win11-button">恢复默认设置</button>
+                            <button class="win11-button primary">保存设置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="status-bar-left">
+                <span class="status-bar-item">
+                    <i class="fas fa-shield-alt"></i>
+                    就绪
+                </span>
+            </div>
+            <div class="status-bar-right">
+                <span class="status-bar-item">UTF-8</span>
+                <span class="status-bar-item">管理员权限</span>
+                <span class="status-bar-item">v1.11.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 对话框 -->
+    <div class="dialog-overlay hidden" id="dialog-overlay">
+        <div class="dialog">
+            <div class="dialog-title">
+                <span>确认操作</span>
+                <button class="dialog-close" onclick="closeDialog()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="dialog-content">
+                <div class="dialog-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="dialog-message">
+                    您确定要执行此操作吗？
+                </div>
+            </div>
+            <div class="dialog-actions">
+                <button class="win11-button" onclick="closeDialog()">取消</button>
+                <button class="win11-button primary" onclick="confirmAction()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/win11-app.js"></script>
+</body>
+</html>

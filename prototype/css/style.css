@@ -1157,19 +1157,186 @@ body {
     }
 }
 
-/* 工具类 */
-.hidden {
-    display: none !important;
+/* 样式指南页面样式 */
+.color-swatch {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
+.color-swatch:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 550;
+    color: var(--gray-900);
+    margin-bottom: var(--spacing-2);
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+    background: var(--gray-0);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+}
+
+.form-input:disabled {
+    background: var(--gray-100);
+    color: var(--gray-400);
+    cursor: not-allowed;
+}
+
+.form-error {
+    display: block;
+    font-size: 12px;
+    color: var(--danger);
+    margin-top: var(--spacing-1);
+    padding-left: var(--spacing-2);
+}
+
+.form-error i {
+    margin-right: var(--spacing-1);
+}
+
+/* 复选框和单选框样式 */
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-1);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+}
+
+.checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+/* 切换开关已在前文定义 */
+
+/* 页面标题样式 */
+.page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gray-100);
+    letter-spacing: -0.5px;
+    margin-bottom: var(--spacing-1);
+    line-height: 1.2;
+}
+
+.page-description {
+    font-size: 15px;
+    color: var(--gray-500);
+    line-height: 1.5;
+}
+
+/* 通知容器样式 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    min-width: 300px;
+    max-width: 400px;
+    padding: var(--spacing-4) var(--spacing-5);
+    background: var(--gray-0);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: slideInRight var(--transition-normal);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.notification-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.notification.success .notification-icon {
+    color: var(--success);
+}
+
+.notification.warning .notification-icon {
+    color: var(--warning);
+}
+
+.notification.error .notification-icon {
+    color: var(--danger);
+}
+
+.notification.info .notification-icon {
+    color: var(--info);
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.notification-message {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-top: 2px;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.notification-close:hover {
+    background: var(--gray-100);
+    color: var(--gray-900);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 24px;
+    }
+    
+    .color-swatch {
+        margin-bottom: var(--spacing-4);
+    }
 }
