@@ -28,7 +28,8 @@ $RECYCLE.BIN/
 *.swp
 *.swo
 
-# 构建产物
+# PyInstaller
+*.spec
 *.exe
 *.msi
 

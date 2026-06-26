@@ -62,6 +62,12 @@ Windows-User-Files-Mover 是一款专为Windows系统设计的实用工具，旨
 - **依赖**: PowerShell 5.1+，需要管理员权限运行
 - **适用场景**: 迁移 `.vscode`、`.cursor` 等开发工具配置文件夹
 
+### 5. 开发配置迁移 GUI 版
+- **文件**: `Move_DevConfigs_GUI.py` / `dist/Move_DevConfigs_GUI.exe`
+- **特点**: 图形化界面版本，专注开发工具配置迁移；支持扫描实际存在的目录、预览模式（WhatIf）、文件数量验证
+- **依赖**: Python 3.6+（源码运行）或无依赖（EXE 直接运行）
+- **适用场景**: 开发者使用 GUI 方式迁移 AI/IDE 配置目录到非系统盘
+
 ## 🛠️ 快速开始
 
 ### 批处理版本使用
@@ -86,10 +92,20 @@ Windows-User-Files-Mover 是一款专为Windows系统设计的实用工具，旨
 
 ## 📦 打包EXE文件
 
-如需将Python版打包为独立可执行文件：
+### 打包 Python GUI 版
 
-1. 以管理员身份运行 `build_exe_robust.bat`
-2. 打包完成后，EXE文件将位于`dist`文件夹中
+```bash
+# 安装 PyInstaller
+pip install pyinstaller
+
+# 打包用户文件迁移工具
+python -m PyInstaller --onefile --windowed --name "Windows_UserFiles_Mover" Windows_UserFiles_Mover.py
+
+# 打包开发配置迁移工具
+python -m PyInstaller --onefile --windowed --name "Move_DevConfigs_GUI" Move_DevConfigs_GUI.py
+```
+
+打包完成后，EXE 文件位于 `dist/` 目录中，可直接分发运行，无需 Python 环境。
 
 > **注意**：详细打包指南请参考 `docs/exe_packaging_guide.md` 文档
 
