@@ -141,15 +141,10 @@ class DevConfigsMoverApp:
         except Exception:
             pass
 
-        style.configure("Title.TLabel",  font=("Microsoft YaHei UI", 15, "bold"), foreground="#1565C0")
-        style.configure("Info.TLabel",   font=("Microsoft YaHei UI",  9),          foreground="#757575")
-        style.configure("Warn.TLabel",   font=("Microsoft YaHei UI",  9),          foreground="#C62828")
-        style.configure("TLabelframe.Label", font=("Microsoft YaHei UI", 9, "bold"))
-        style.configure("Action.TButton", font=("Microsoft YaHei UI", 10, "bold"), padding=(12, 4))
-        style.configure("TCheckbutton",   font=("Microsoft YaHei UI",  9))
-        style.configure("TButton",        font=("Microsoft YaHei UI",  9))
-        style.configure("TEntry",         font=("Microsoft YaHei UI",  9))
-        style.configure("TLabel",         font=("Microsoft YaHei UI",  9))
+        style.configure("Title.TLabel",  foreground="#1565C0")
+        style.configure("Info.TLabel",   foreground="#757575")
+        style.configure("Warn.TLabel",   foreground="#C62828")
+        style.configure("Action.TButton", padding=(12, 4))
 
     # ── UI 构建 ───────────────────────────────
 
@@ -597,10 +592,6 @@ def main():
         sys.exit(1)
 
     root = tk.Tk()
-    try:
-        root.option_add("*Font", "Microsoft YaHei UI 9")
-    except Exception:
-        pass
 
     DevConfigsMoverApp(root)
     root.mainloop()

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 文件迁移工具 - 高保真原型</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                </div>
+                <span class="app-title">文件迁移工具</span>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">主导航</div>
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-th-large nav-icon"></i>
+                    <span>仪表盘</span>
+                </a>
+                <a href="#" class="nav-item" data-page="migrate">
+                    <i class="fas fa-arrow-up nav-icon"></i>
+                    <span>开始迁移</span>
+                </a>
+                <a href="#" class="nav-item" data-page="profiles">
+                    <i class="fas fa-sliders-h nav-icon"></i>
+                    <span>迁移配置</span>
+                </a>
+                <a href="#" class="nav-item" data-page="history">
+                    <i class="fas fa-history nav-icon"></i>
+                    <span>迁移历史</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">高级功能</div>
+                <a href="#" class="nav-item" data-page="symlinks">
+                    <i class="fas fa-link nav-icon"></i>
+                    <span>符号链接管理</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span>设置</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name">Admin</div>
+                        <div class="user-role">系统管理员</div>
+                    </div>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 顶部栏 -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb">
+                        <span class="breadcrumb-item">文件迁移工具</span>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-item active" id="pageTitle">仪表盘</span>
+                    </div>
+                </div>
+                <div class="top-bar-right">
+                    <button class="icon-button" title="搜索">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-button" title="通知">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="icon-button" title="帮助">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 页面内容 -->
+            <div class="page-content" id="pageContent">
+                <!-- 仪表盘页面 -->
+                <div class="page active" id="page-dashboard">
+                    <div class="page-header">
+                        <div class="page-header-content">
+                            <div>
+                                <h1>仪表盘</h1>
+                                <p class="page-description">欢迎回来，Admin。这是您的迁移概览。</p>
+                            </div>
+                            <div class="page-header-actions">
+                                <button class="button" onclick="refreshDashboard()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>刷新</span>
+                                </button>
+                                <button class="button primary" onclick="navigateToPage('migrate')">
+                                    <i class="fas fa-plus"></i>
+                                    <span>新建迁移</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 统计卡片 -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-file"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statFiles">1,247</div>
+                                <div class="stat-label">已迁移文件</div>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>12%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">98.5%</div>
+                                <div class="stat-label">成功率</div>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>2.3%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">23 min</div>
+                                <div class="stat-label">上次迁移耗时</div>
+                            </div>
+                            <div class="stat-trend down">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>8%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">15.2 GB</div>
+                                <div class="stat-label">已迁移数据</div>
+                            </div>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>5.2 GB</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 内容网格 -->
+                    <div class="content-grid">
+                        <!-- 快速操作 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2><i class="fas fa-bolt"></i> 快速操作</h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="quick-actions">
+                                    <button class="action-button primary" onclick="navigateToPage('migrate')">
+                                        <i class="fas fa-upload"></i>
+                                        <span>开始新迁移</span>
+                                    </button>
+                                    <button class="action-button" onclick="navigateToPage('profiles')">
+                                        <i class="fas fa-cog"></i>
+                                        <span>管理配置</span>
+                                    </button>
+                                    <button class="action-button" onclick="navigateToPage('history')">
+                                        <i class="fas fa-history"></i>
+                                        <span>查看历史</span>
+                                    </button>
+                                    <button class="action-button" onclick="showKeyboardShortcuts()">
+                                        <i class="fas fa-keyboard"></i>
+                                        <span>快捷键</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 最近迁移 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2><i class="fas fa-history"></i> 最近迁移</h2>
+                                <button class="text-button" onclick="navigateToPage('history')">查看全部 <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                            <div class="card-content">
+                                <div class="history-list">
+                                    <div class="history-item">
+                                        <div class="history-icon success">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="history-details">
+                                            <div class="history-title">文档文件夹迁移</div>
+                                            <div class="history-meta">2,847 文件 • 1.2 GB • 昨天 14:32</div>
+                                        </div>
+                                        <div class="history-status success">成功</div>
+                                    </div>
+                                    <div class="history-item">
+                                        <div class="history-icon success">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="history-details">
+                                            <div class="history-title">图片文件夹迁移</div>
+                                            <div class="history-meta">847 文件 • 3.5 GB • 昨天 10:15</div>
+                                        </div>
+                                        <div class="history-status success">成功</div>
+                                    </div>
+                                    <div class="history-item">
+                                        <div class="history-icon warning">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="history-details">
+                                            <div class="history-title">下载文件夹迁移</div>
+                                            <div class="history-meta">156 文件 • 450 MB • 3天前 09:22</div>
+                                        </div>
+                                        <div class="history-status warning">部分成功</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 系统状态 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-server"></i> 系统状态</h2>
+                            <button class="text-button" onclick="refreshSystemStatus()"><i class="fas fa-sync-alt"></i> 刷新</button>
+                        </div>
+                        <div class="card-content">
+                            <div class="system-status">
+                                <div class="status-item">
+                                    <div class="status-label">
+                                        <i class="fas fa-hdd"></i>
+                                        磁盘空间 (C:)
+                                    </div>
+                                    <div class="status-value">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 78%"></div>
+                                        </div>
+                                        <span>78% 已用 (156 GB / 200 GB)</span>
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">
+                                        <i class="fas fa-hdd"></i>
+                                        磁盘空间 (D:)
+                                    </div>
+                                    <div class="status-value">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill green" style="width: 45%"></div>
+                                        </div>
+                                        <span>45% 已用 (450 GB / 1 TB)</span>
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">
+                                        <i class="fas fa-shield-alt"></i>
+                                        系统保护
+                                    </div>
+                                    <div class="status-value">
+                                        <span class="status-badge success"><i class="fas fa-check-circle"></i> 已启用</span>
+                                    </div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">
+                                        <i class="fas fa-clock"></i>
+                                        上次检查
+                                    </div>
+                                    <div class="status-value">2026-06-26 16:15:32</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 迁移页面（简化显示） -->
+                <div class="page" id="page-migrate">
+                    <div class="page-header">
+                        <h1>开始迁移</h1>
+                        <p class="page-description">选择源目录和目标目录，配置迁移选项</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="empty-state">
+                                <i class="fas fa-file-export"></i>
+                                <h3>迁移向导</h3>
+                                <p>点击下方按钮开始新的迁移任务</p>
+                                <button class="button primary" onclick="startMigrationWizard()">
+                                    <i class="fas fa-play"></i>
+                                    <span>启动迁移向导</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 其他页面占位 -->
+                <div class="page" id="page-profiles">
+                    <div class="page-header">
+                        <h1>迁移配置</h1>
+                        <p class="page-description">管理您的迁移配置文件</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="empty-state">
+                                <i class="fas fa-sliders-h"></i>
+                                <h3>迁移配置管理</h3>
+                                <p>创建和管理不同的迁移配置文件</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page" id="page-history">
+                    <div class="page-header">
+                        <h1>迁移历史</h1>
+                        <p class="page-description">查看所有迁移记录</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="empty-state">
+                                <i class="fas fa-history"></i>
+                                <h3>迁移历史记录</h3>
+                                <p>所有迁移任务的详细历史记录将显示在这里</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page" id="page-symlinks">
+                    <div class="page-header">
+                        <h1>符号链接管理</h1>
+                        <p class="page-description">查看和管理所有符号链接</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="empty-state">
+                                <i class="fas fa-link"></i>
+                                <h3>符号链接管理</h3>
+                                <p>管理已创建的符号链接</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page" id="page-settings">
+                    <div class="page-header">
+                        <h1>设置</h1>
+                        <p class="page-description">配置应用程序选项</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="settings-section">
+                                <h3>常规设置</h3>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-label">自动检查更新</div>
+                                        <div class="setting-description">自动检查并通知新版本</div>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-label">迁移前确认</div>
+                                        <div class="setting-description">每次迁移前显示确认对话框</div>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <div class="setting-label">深色模式</div>
+                                        <div class="setting-description">使用深色主题</div>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 通知容器 -->
+    <div id="notificationContainer" class="notification-container"></div>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>
