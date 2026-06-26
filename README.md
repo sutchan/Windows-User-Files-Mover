@@ -119,7 +119,7 @@ Windows-User-Files-Mover 是一款专为Windows系统设计的实用工具，旨
 - [API参考](docs/api_reference.md) - 功能模块和接口详细说明
 - [常见问题](docs/faq.md) - 常见问题解答和故障排除
 - [优化建议](docs/optimization_suggestions.md) - 项目改进建议和未来计划
-- [工作流规则](docs/6A工作流规则.md) - 项目开发和维护规范
+- [项目规范（OpenSpec）](docs/openspec.md) - 架构设计、编码、文档与发布规范
 - [版本历史](VERSION_HISTORY.md) - 项目版本变更记录
 
 ## 🤝 贡献指南
