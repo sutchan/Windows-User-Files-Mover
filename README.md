@@ -7,7 +7,7 @@
   <a href="https://github.com/sutchan/Windows-User-Files-Mover">
     <img src="https://img.shields.io/badge/GitHub-项目主页-blue.svg">
   </a>
-  <img src="https://img.shields.io/badge/版本-v1.11.0-green.svg">
+  <img src="https://img.shields.io/badge/版本-v1.12.0-green.svg">
   <img src="https://img.shields.io/badge/支持系统-Windows%207%2F8%2F10%2F11-blue.svg">
 </div>
 
@@ -67,6 +67,18 @@ Windows-User-Files-Mover 是一款专为Windows系统设计的实用工具，旨
 - **特点**: 图形化界面版本，专注开发工具配置迁移；支持扫描实际存在的目录、预览模式（WhatIf）、文件数量验证
 - **依赖**: Python 3.6+（源码运行）或无依赖（EXE 直接运行）
 - **适用场景**: 开发者使用 GUI 方式迁移 AI/IDE 配置目录到非系统盘
+
+### 6. Windows 桌面应用版（New!）
+- **文件**: `Windows_Migration_App.py`
+- **特点**: 使用 CustomTkinter 创建的现代 Windows 11 风格桌面应用；侧边栏导航、仪表盘、迁移向导、配置管理
+- **依赖**: Python 3.6+，CustomTkinter 库
+- **适用场景**: 需要现代化 GUI 界面、更好的用户体验
+
+### 7. HTML 原型版（New!）
+- **文件**: `prototype/windows-app/index.html`
+- **特点**: Windows 11 风格的高保真 HTML 原型；完整的 UI/UX 设计展示；可用于设计评审和用户测试
+- **依赖**: 现代浏览器（Chrome、Edge、Firefox）
+- **适用场景**: 设计展示、用户测试、UI/UX 评审
 
 ## 🛠️ 快速开始
 
@@ -136,6 +148,7 @@ python -m PyInstaller --onefile --windowed --name "Move_DevConfigs_GUI" Move_Dev
 - [常见问题](docs/faq.md) - 常见问题解答和故障排除
 - [优化建议](docs/optimization_suggestions.md) - 项目改进建议和未来计划
 - [项目规范（OpenSpec）](docs/openspec.md) - 架构设计、编码、文档与发布规范
+- [设计系统规范](prototype/windows-app/DESIGN.md) - UI/UX 设计系统规范（色彩、字体、组件、交互）
 - [版本历史](VERSION_HISTORY.md) - 项目版本变更记录
 
 ## 🤝 贡献指南
@@ -157,7 +170,7 @@ python -m PyInstaller --onefile --windowed --name "Move_DevConfigs_GUI" Move_Dev
 
 ## 📌 版本信息
 
-- **当前版本**：v1.11.0
+- **当前版本**：v1.12.0
 - **作者**：SutChan
 - **最后更新**：2026-06-26
 

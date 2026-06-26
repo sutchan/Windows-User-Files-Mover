@@ -92,8 +92,8 @@ function showNotification(type, title, message, duration = 3000) {
 }
 
 // ===== 刷新仪表盘 =====
-function refreshDashboard() {
-    const btn = event.target.closest('button');
+function refreshDashboard(event) {
+    const btn = event ? event.target?.closest('button') : document.querySelector('#page-dashboard .page-header-actions .button');
     const icon = btn.querySelector('i');
     
     // 添加旋转动画
@@ -143,8 +143,8 @@ function startMigrationWizard() {
 }
 
 // ===== 刷新系统状态 =====
-function refreshSystemStatus() {
-    const btn = event.target.closest('button');
+function refreshSystemStatus(event) {
+    const btn = event ? event.target?.closest('button') : document.querySelector('.card-header:has(.fa-sync-alt)');
     const icon = btn.querySelector('i');
     
     icon.style.animation = 'spin 1s linear infinite';

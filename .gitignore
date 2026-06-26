@@ -1,9 +1,6 @@
 # 工作区文件
 *.code-workspace
 
-# 文档生成目录
-/docs
-
 # 日志文件
 *.log
 

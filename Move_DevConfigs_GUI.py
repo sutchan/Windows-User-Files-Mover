@@ -8,7 +8,7 @@
   使用 NTFS 目录联接（Junction Point）保持路径兼容，应用程序无感知。
 
 作者：SutChan
-版本：v1.11.0
+版本：v1.12.0
 项目地址：https://github.com/sutchan/Windows-User-Files-Mover
 """
 
@@ -26,7 +26,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 #  常量
 # ──────────────────────────────────────────────
 APP_TITLE   = "开发配置文件夹迁移工具"
-APP_VERSION = "v1.11.0"
+APP_VERSION = "v1.12.0"
 APP_AUTHOR  = "SutChan"
 APP_URL     = "https://github.com/sutchan/Windows-User-Files-Mover"
 

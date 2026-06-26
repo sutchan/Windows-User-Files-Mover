@@ -8,6 +8,18 @@
 
 ## 最新版本
 
+### v1.12.0 (2026-06-26)
+
+**更新内容：**
+- **新增 Windows 桌面应用版**：使用 Python + CustomTkinter 创建现代化 Windows 11 风格 GUI
+- **新增 HTML 高保真原型**：Windows 11 风格原型设计（`prototype/windows-app/index.html`）
+- **新增设计系统规范文档**：`prototype/windows-app/DESIGN.md`（9 章节完整规范）
+- **修复字体解析 Bug**：修复 `Move_DevConfigs_GUI.py` 在 PyInstaller 打包后的 TclError 问题
+- **创建 CHANGELOG.md**：采用标准 Keep a Changelog 格式
+- **更新所有文件版本号**：统一更新到 v1.12.0
+- **更新 README.md**：添加新版本说明和文档链接
+- **更新 openspec.md**：添加 Windows 桌面应用、HTML 原型、设计系统规范等新章节
+
 ### v1.11.0 (2026-06-26)
 
 **更新内容：**
