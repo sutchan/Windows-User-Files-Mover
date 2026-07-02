@@ -6,6 +6,15 @@
     将指定的开发工具配置文件夹从系统盘迁移到目标盘，并使用 mklink /J 创建目录联接，
     确保应用程序正常访问配置文件。
 
+.VERSION
+    v1.12.0
+
+.AUTHOR
+    SutChan
+
+.PROJECT
+    https://github.com/sutchan/Windows-User-Files-Mover
+
 .PARAMETER SourceBase
     源目录基础路径（默认：C:\Users\<当前用户名>）
 

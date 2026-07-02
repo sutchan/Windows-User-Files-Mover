@@ -1,17 +1,27 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Windows 用户文件迁移工具 - 桌面应用版
+
 使用 CustomTkinter 实现 Windows 11 Fluent Design 风格界面
+
+作者：SutChan
+版本：v1.12.0
+项目地址：https://github.com/sutchan/Windows-User-Files-Mover
 """
 
-import customtkinter as ctk
+# 标准库导入
+import json
 import os
 import shutil
-import json
-from pathlib import Path
-from tkinter import filedialog, messagebox
 import threading
 import time
 from datetime import datetime
+from pathlib import Path
+from tkinter import filedialog, messagebox
+
+# 第三方库导入
+import customtkinter as ctk
 
 # 设置 CustomTkinter 外观
 ctk.set_appearance_mode("light")  # "light", "dark", "system"

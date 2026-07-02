@@ -9,7 +9,60 @@
   </a>
   <img src="https://img.shields.io/badge/版本-v1.12.0-green.svg">
   <img src="https://img.shields.io/badge/支持系统-Windows%207%2F8%2F10%2F11-blue.svg">
+  <a href="https://github.com/sutchan/Windows-User-Files-Mover/releases">
+    <img src="https://img.shields.io/github/v/release/sutchan/Windows-User-Files-Mover?include_prereleases&style=flat&label=GitHub%20Releases">
+  </a>
 </div>
+
+## 📥 下载与安装
+
+### 方式一：下载预构建 EXE（推荐）
+
+访问 [GitHub Releases](https://github.com/sutchan/Windows-User-Files-Mover/releases) 页面，下载最新版本的 EXE 文件：
+
+- **Windows_UserFiles_Mover.exe** - Python GUI 版独立可执行文件
+- **Move_DevConfigs_GUI.exe** - 开发配置迁移 GUI 版独立可执行文件
+
+下载后直接运行，无需安装 Python 或其他依赖。
+
+### 方式二：从源码运行
+
+如果您有 Python 环境，可以直接运行 Python 源码：
+
+```bash
+# 克隆仓库
+git clone https://github.com/sutchan/Windows-User-Files-Mover.git
+cd Windows-User-Files-Mover
+
+# 运行 Python GUI 版
+python Windows_UserFiles_Mover.py
+
+# 运行开发配置迁移 GUI 版
+python Move_DevConfigs_GUI.py
+
+# 运行 Windows 桌面应用版（需要安装 customtkinter）
+pip install customtkinter
+python Windows_Migration_App.py
+```
+
+### 方式三：自行打包 EXE
+
+如果您想自行打包 EXE 文件，可以使用 PyInstaller：
+
+```bash
+# 安装 PyInstaller
+pip install pyinstaller
+
+# 打包 Python GUI 版
+pyinstaller --onefile --windowed --name Windows_UserFiles_Mover Windows_UserFiles_Mover.py
+
+# 打包开发配置迁移 GUI 版
+pyinstaller --onefile --windowed --name Move_DevConfigs_GUI Move_DevConfigs_GUI.py
+```
+
+打包后的 EXE 文件将位于 `dist/` 目录中。
+
+---
 
 ## 📋 项目概述
 
